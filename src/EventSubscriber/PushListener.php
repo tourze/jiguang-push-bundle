@@ -3,9 +3,9 @@
 namespace JiguangPushBundle\EventSubscriber;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use JiguangPushBundle\Entity\Push;
-use JiguangPushBundle\Repository\PushRepository;
 use JiguangPushBundle\Request\PushRequest;
 use JiguangPushBundle\Service\JiguangService;
 
@@ -14,7 +14,7 @@ class PushListener
 {
     public function __construct(
         private readonly JiguangService $jiguangService,
-        private readonly PushRepository $pushRepository,
+        private readonly EntityManagerInterface $entityManager,
     )
     {
     }
@@ -27,7 +27,8 @@ class PushListener
         $response = $this->jiguangService->request($request);
         if (isset($response['msg_id'])) {
             $push->setMsgId($response['msg_id']);
-            $this->pushRepository->save($push);
+            $this->entityManager->persist($push);
+            $this->entityManager->flush();
         }
     }
 }
