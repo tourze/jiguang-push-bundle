@@ -4,7 +4,6 @@ namespace JiguangPushBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use DoctrineEnhanceBundle\Repository\CommonRepositoryAware;
 use JiguangPushBundle\Entity\Device;
 
 /**
@@ -15,8 +14,6 @@ use JiguangPushBundle\Entity\Device;
  */
 class DeviceRepository extends ServiceEntityRepository
 {
-    use CommonRepositoryAware;
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Device::class);

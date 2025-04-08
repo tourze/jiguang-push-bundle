@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use DoctrineEnhanceBundle\Service\SnowflakeIdGenerator;
 use JiguangPushBundle\Repository\TagRepository;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
@@ -21,14 +20,11 @@ use Tourze\EasyAdmin\Attribute\Filter\Filterable;
 #[ORM\UniqueConstraint(name: 'jiguang_push_tag_idx_uniq', columns: ['account_id', 'value'])]
 class Tag
 {
-    #[ExportColumn]
-    #[ListColumn(order: -1, sorter: true)]
-    #[Groups(['restful_read', 'admin_curd', 'recursive_view', 'api_tree'])]
+    #[ListColumn]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = '0';
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: Types::INTEGER, options: ['comment' => '主键'])]
+    private ?int $id = 0;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -62,7 +58,7 @@ class Tag
         $this->devices = new ArrayCollection();
     }
 
-    public function getId(): ?string
+    public function getId(): ?int
     {
         return $this->id;
     }
