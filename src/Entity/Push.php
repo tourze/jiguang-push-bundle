@@ -12,12 +12,9 @@ use JiguangPushBundle\Entity\Embedded\Options;
 use JiguangPushBundle\Enum\PlatformEnum;
 use JiguangPushBundle\Repository\PushRepository;
 use Tourze\Arrayable\Arrayable;
-use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
-use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
-use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
+use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
 use Tourze\EasyAdmin\Attribute\Column\ListColumn;
-use Tourze\EasyAdmin\Attribute\Filter\Filterable;
 
 /**
  * @see https://docs.jiguang.cn/jpush/server/push/rest_api_v3_push
@@ -26,6 +23,7 @@ use Tourze\EasyAdmin\Attribute\Filter\Filterable;
 #[ORM\Table(name: 'ims_jiguang_push_request', options: ['comment' => '推送消息'])]
 class Push implements Arrayable
 {
+    use TimestampableAware;
     #[ListColumn(order: -1)]
     #[ExportColumn]
     #[ORM\Id]
@@ -60,21 +58,6 @@ class Push implements Arrayable
 
     #[ORM\Column(length: 100, nullable: true, options: ['comment' => '消息ID，发送成功后返回'])]
     private ?string $msgId = null;
-
-    #[Filterable]
-    #[IndexColumn]
-    #[ListColumn(order: 98, sorter: true)]
-    #[ExportColumn]
-    #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '创建时间'])]
-    private ?\DateTimeInterface $createTime = null;
-
-    #[UpdateTimeColumn]
-    #[ListColumn(order: 99, sorter: true)]
-    #[Filterable]
-    #[ExportColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '更新时间'])]
-    private ?\DateTimeInterface $updateTime = null;
 
     public function getId(): ?int
     {
@@ -224,25 +207,4 @@ class Push implements Arrayable
         // }
 
         return array_filter($data);
-    }
-
-    public function setCreateTime(?\DateTimeInterface $createdAt): void
-    {
-        $this->createTime = $createdAt;
-    }
-
-    public function getCreateTime(): ?\DateTimeInterface
-    {
-        return $this->createTime;
-    }
-
-    public function setUpdateTime(?\DateTimeInterface $updateTime): void
-    {
-        $this->updateTime = $updateTime;
-    }
-
-    public function getUpdateTime(): ?\DateTimeInterface
-    {
-        return $this->updateTime;
-    }
-}
+    }}
