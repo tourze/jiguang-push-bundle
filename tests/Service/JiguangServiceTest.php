@@ -89,8 +89,6 @@ class JiguangServiceTest extends TestCase
         $method->setAccessible(true);
         
         $options = $method->invoke($this->service, $request);
-        
-        $this->assertIsArray($options);
         $this->assertArrayHasKey('headers', $options);
         $this->assertArrayHasKey('Authorization', $options['headers']);
         
@@ -118,8 +116,6 @@ class JiguangServiceTest extends TestCase
         $method->setAccessible(true);
         
         $result = $method->invoke($this->service, $request, $response);
-        
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('msg_id', $result);
         $this->assertArrayHasKey('sendno', $result);
         $this->assertSame('12345', $result['msg_id']);

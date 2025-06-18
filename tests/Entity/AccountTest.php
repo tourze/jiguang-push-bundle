@@ -103,8 +103,6 @@ class AccountTest extends TestCase
 
             // 检查toArray方法结果是否包含所有必要字段
             $data = $this->account->toArray();
-            
-            $this->assertIsArray($data);
             $this->assertArrayHasKey('id', $data);
             $this->assertArrayHasKey('title', $data);
             $this->assertArrayHasKey('appKey', $data);

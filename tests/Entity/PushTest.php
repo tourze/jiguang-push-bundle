@@ -169,8 +169,6 @@ class PushTest extends TestCase
         $data = $this->push->toArray();
         
         // 验证基本结构
-        $this->assertIsArray($data);
-        
         // 验证平台
         $this->assertArrayHasKey('platform', $data);
         $this->assertSame($platform->value, $data['platform']);
@@ -181,19 +179,16 @@ class PushTest extends TestCase
         
         // 验证通知
         $this->assertArrayHasKey('notification', $data);
-        $this->assertIsArray($data['notification']);
         $this->assertArrayHasKey('alert', $data['notification']);
         $this->assertSame('测试通知', $data['notification']['alert']);
         
         // 验证消息
         $this->assertArrayHasKey('message', $data);
-        $this->assertIsArray($data['message']);
         $this->assertArrayHasKey('msg_content', $data['message']);
         $this->assertSame('测试消息内容', $data['message']['msg_content']);
         
         // 验证回调
         if (isset($data['callback'])) {
-            $this->assertIsArray($data['callback']);
             $this->assertArrayHasKey('url', $data['callback']);
             $this->assertSame('https://example.com/callback', $data['callback']['url']);
         }
@@ -213,8 +208,6 @@ class PushTest extends TestCase
         $data = $this->push->toArray();
         
         // 验证基本结构
-        $this->assertIsArray($data);
-        
         // 验证平台
         $this->assertArrayHasKey('platform', $data);
         $this->assertSame($platform->value, $data['platform']);

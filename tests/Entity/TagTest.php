@@ -105,12 +105,9 @@ class TagTest extends TestCase
             $this->tag->addDevice($device);
 
             $data = $this->tag->toArray();
-            
-            $this->assertIsArray($data);
             $this->assertArrayHasKey('id', $data);
             
             if (isset($data['account'])) {
-                $this->assertIsArray($data['account']);
                 // 可能无法确保account id的具体值，只验证其存在
                 $this->assertArrayHasKey('id', $data['account']);
             }
@@ -119,7 +116,6 @@ class TagTest extends TestCase
             $this->assertSame($value, $data['value']);
             
             if (isset($data['devices'])) {
-                $this->assertIsArray($data['devices']);
                 $this->assertNotEmpty($data['devices']);
             }
         } else {

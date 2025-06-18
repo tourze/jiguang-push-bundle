@@ -123,12 +123,9 @@ class DeviceTest extends TestCase
             $this->device->addTag($tag);
 
             $data = $this->device->toArray();
-            
-            $this->assertIsArray($data);
             $this->assertArrayHasKey('id', $data);
             
             if (isset($data['account'])) {
-                $this->assertIsArray($data['account']);
                 $this->assertArrayHasKey('id', $data['account']);
             }
             
@@ -142,7 +139,6 @@ class DeviceTest extends TestCase
             $this->assertSame($mobile, $data['mobile']);
             
             if (isset($data['tags'])) {
-                $this->assertIsArray($data['tags']);
                 $this->assertNotEmpty($data['tags']);
             }
         } else {

@@ -13,8 +13,6 @@ use JiguangPushBundle\Enum\PlatformEnum;
 use JiguangPushBundle\Repository\PushRepository;
 use Tourze\Arrayable\Arrayable;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
 
 /**
  * @see https://docs.jiguang.cn/jpush/server/push/rest_api_v3_push
@@ -24,8 +22,6 @@ use Tourze\EasyAdmin\Attribute\Column\ListColumn;
 class Push implements Arrayable
 {
     use TimestampableAware;
-    #[ListColumn(order: -1)]
-    #[ExportColumn]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]

@@ -62,8 +62,6 @@ class PushRequestTest extends TestCase
         $this->request->setMessage($this->message);
         
         $options = $this->request->getRequestOptions();
-        
-        $this->assertIsArray($options);
         $this->assertArrayHasKey('json', $options);
         $this->assertSame($this->message->toArray(), $options['json']);
     }
@@ -78,18 +76,14 @@ class PushRequestTest extends TestCase
         $this->request->setMessage($this->message);
         
         $options = $this->request->getRequestOptions();
-        
-        $this->assertIsArray($options);
         $this->assertArrayHasKey('json', $options);
         
         $json = $options['json'];
-        $this->assertIsArray($json);
         $this->assertArrayHasKey('platform', $json);
         $this->assertArrayHasKey('audience', $json);
         $this->assertArrayHasKey('message', $json);
         
         // 验证受众
-        $this->assertIsArray($json['audience']);
         $this->assertArrayHasKey('registration_id', $json['audience']);
         $this->assertSame(['reg_id_1', 'reg_id_2'], $json['audience']['registration_id']);
     }

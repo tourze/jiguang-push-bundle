@@ -8,7 +8,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JiguangPushBundle\Repository\TagRepository;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\Table(name: 'ims_jiguang_push_tag', options: ['comment' => '标签信息'])]
@@ -16,7 +15,6 @@ use Tourze\EasyAdmin\Attribute\Column\ListColumn;
 class Tag
 {
     use TimestampableAware;
-    #[ListColumn]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => '主键'])]
