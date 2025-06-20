@@ -44,7 +44,7 @@ class AccountTest extends TestCase
     {
         $this->account->setValid(true);
         $this->assertTrue($this->account->isValid());
-        
+
         $this->account->setValid(false);
         $this->assertFalse($this->account->isValid());
     }
@@ -65,14 +65,14 @@ class AccountTest extends TestCase
 
     public function testGetSetCreateTime(): void
     {
-        $date = new \DateTime();
+        $date = new \DateTimeImmutable();
         $this->account->setCreateTime($date);
         $this->assertSame($date, $this->account->getCreateTime());
     }
 
     public function testGetSetUpdateTime(): void
     {
-        $date = new \DateTime();
+        $date = new \DateTimeImmutable();
         $this->account->setUpdateTime($date);
         $this->assertSame($date, $this->account->getUpdateTime());
     }
@@ -89,8 +89,8 @@ class AccountTest extends TestCase
             $valid = true;
             $createdBy = 'admin';
             $updatedBy = 'admin';
-            $createTime = new \DateTime('2022-01-01 12:00:00');
-            $updateTime = new \DateTime('2022-01-02 12:00:00');
+            $createTime = new \DateTimeImmutable('2022-01-01 12:00:00');
+            $updateTime = new \DateTimeImmutable('2022-01-02 12:00:00');
 
             $this->account->setTitle($title);
             $this->account->setAppKey($appKey);
@@ -117,4 +117,4 @@ class AccountTest extends TestCase
             $this->markTestSkipped('toArray method is not implemented in Account class');
         }
     }
-} 
+}

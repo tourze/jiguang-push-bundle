@@ -51,7 +51,7 @@ class TagTest extends TestCase
 
     public function testGetSetUpdateTime(): void
     {
-        $date = new \DateTime();
+        $date = new \DateTimeImmutable();
         $this->tag->setUpdateTime($date);
         $this->assertSame($date, $this->tag->getUpdateTime());
     }
@@ -68,17 +68,17 @@ class TagTest extends TestCase
         $device = new Device();
         // 不能设置Device的ID，它是自动生成的
         $device->setRegistrationId('test-registration-id');
-        
+
         // 添加设备
         $result = $this->tag->addDevice($device);
         $this->assertSame($this->tag, $result);
         $this->assertCount(1, $this->tag->getDevices());
         $this->assertTrue($this->tag->getDevices()->contains($device));
-        
+
         // 再次添加相同设备不会重复
         $this->tag->addDevice($device);
         $this->assertCount(1, $this->tag->getDevices());
-        
+
         // 移除设备
         $result = $this->tag->removeDevice($device);
         $this->assertSame($this->tag, $result);
@@ -91,8 +91,8 @@ class TagTest extends TestCase
         // 检查是否存在toArray方法
         if (method_exists($this->tag, 'toArray')) {
             $value = 'test-tag-value';
-            $createTime = new \DateTime('2022-01-01 12:00:00');
-            $updateTime = new \DateTime('2022-01-02 12:00:00');
+            $createTime = new \DateTimeImmutable('2022-01-01 12:00:00');
+            $updateTime = new \DateTimeImmutable('2022-01-02 12:00:00');
 
             $this->tag->setAccount($this->account);
             $this->tag->setValue($value);
@@ -106,15 +106,15 @@ class TagTest extends TestCase
 
             $data = $this->tag->toArray();
             $this->assertArrayHasKey('id', $data);
-            
+
             if (isset($data['account'])) {
                 // 可能无法确保account id的具体值，只验证其存在
                 $this->assertArrayHasKey('id', $data['account']);
             }
-            
+
             $this->assertArrayHasKey('value', $data);
             $this->assertSame($value, $data['value']);
-            
+
             if (isset($data['devices'])) {
                 $this->assertNotEmpty($data['devices']);
             }
@@ -122,4 +122,4 @@ class TagTest extends TestCase
             $this->markTestSkipped('toArray method is not implemented in Tag class');
         }
     }
-} 
+}

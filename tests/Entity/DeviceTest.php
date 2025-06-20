@@ -58,14 +58,14 @@ class DeviceTest extends TestCase
 
     public function testGetSetCreateTime(): void
     {
-        $date = new \DateTime();
+        $date = new \DateTimeImmutable();
         $this->device->setCreateTime($date);
         $this->assertSame($date, $this->device->getCreateTime());
     }
 
     public function testGetSetUpdateTime(): void
     {
-        $date = new \DateTime();
+        $date = new \DateTimeImmutable();
         $this->device->setUpdateTime($date);
         $this->assertSame($date, $this->device->getUpdateTime());
     }
@@ -82,17 +82,17 @@ class DeviceTest extends TestCase
         $tag = new Tag();
         // 不能设置Tag的ID，它是自动生成的
         $tag->setValue('test-tag');
-        
+
         // 添加标签
         $result = $this->device->addTag($tag);
         $this->assertSame($this->device, $result);
         $this->assertCount(1, $this->device->getTags());
         $this->assertTrue($this->device->getTags()->contains($tag));
-        
+
         // 再次添加相同标签不会重复
         $this->device->addTag($tag);
         $this->assertCount(1, $this->device->getTags());
-        
+
         // 移除标签
         $result = $this->device->removeTag($tag);
         $this->assertSame($this->device, $result);
@@ -107,8 +107,8 @@ class DeviceTest extends TestCase
             $registrationId = 'test-registration-id';
             $alias = 'test-alias';
             $mobile = '13800138000';
-            $createTime = new \DateTime('2022-01-01 12:00:00');
-            $updateTime = new \DateTime('2022-01-02 12:00:00');
+            $createTime = new \DateTimeImmutable('2022-01-01 12:00:00');
+            $updateTime = new \DateTimeImmutable('2022-01-02 12:00:00');
 
             $this->device->setAccount($this->account);
             $this->device->setRegistrationId($registrationId);
@@ -124,20 +124,20 @@ class DeviceTest extends TestCase
 
             $data = $this->device->toArray();
             $this->assertArrayHasKey('id', $data);
-            
+
             if (isset($data['account'])) {
                 $this->assertArrayHasKey('id', $data['account']);
             }
-            
+
             $this->assertArrayHasKey('registrationId', $data);
             $this->assertSame($registrationId, $data['registrationId']);
-            
+
             $this->assertArrayHasKey('alias', $data);
             $this->assertSame($alias, $data['alias']);
-            
+
             $this->assertArrayHasKey('mobile', $data);
             $this->assertSame($mobile, $data['mobile']);
-            
+
             if (isset($data['tags'])) {
                 $this->assertNotEmpty($data['tags']);
             }
@@ -145,4 +145,4 @@ class DeviceTest extends TestCase
             $this->markTestSkipped('toArray method is not implemented in Device class');
         }
     }
-} 
+}
