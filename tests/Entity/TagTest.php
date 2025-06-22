@@ -44,7 +44,7 @@ class TagTest extends TestCase
 
     public function testGetSetCreateTime(): void
     {
-        $date = new \DateTime();
+        $date = new \DateTimeImmutable();
         $this->tag->setCreateTime($date);
         $this->assertSame($date, $this->tag->getCreateTime());
     }

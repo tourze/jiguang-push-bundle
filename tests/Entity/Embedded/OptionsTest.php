@@ -147,8 +147,6 @@ class OptionsTest extends TestCase
     {
         // 没有设置任何字段
         $data = $this->options->toArray();
-        
-        $this->assertIsArray($data);
         $this->assertEmpty($data);
     }
 
@@ -179,8 +177,6 @@ class OptionsTest extends TestCase
         $this->options->setSync($sync);
         
         $data = $this->options->toArray();
-        
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('time_to_live', $data);
         $this->assertArrayHasKey('apns_production', $data);
         $this->assertArrayHasKey('apns_collapse_id', $data);
@@ -217,8 +213,6 @@ class OptionsTest extends TestCase
         // 其他字段保持为null
         
         $data = $this->options->toArray();
-        
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('time_to_live', $data);
         $this->assertArrayHasKey('apns_production', $data);
         $this->assertArrayNotHasKey('apns_collapse_id', $data);

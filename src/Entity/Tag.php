@@ -12,7 +12,7 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\Table(name: 'ims_jiguang_push_tag', options: ['comment' => '标签信息'])]
 #[ORM\UniqueConstraint(name: 'jiguang_push_tag_idx_uniq', columns: ['account_id', 'value'])]
-class Tag
+class Tag implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -24,7 +24,7 @@ class Tag
     #[ORM\JoinColumn(nullable: false)]
     private ?Account $account = null;
 
-    #[ORM\Column(length: 40)]
+    #[ORM\Column(length: 40, options: ['comment' => '标签值'])]
     private ?string $value = null;
 
     #[ORM\ManyToMany(targetEntity: Device::class, mappedBy: 'tags', fetch: 'EXTRA_LAZY')]
@@ -89,4 +89,9 @@ class Tag
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value ?? 'Tag #' . $this->id;
     }}

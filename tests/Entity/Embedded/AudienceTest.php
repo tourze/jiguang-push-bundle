@@ -143,7 +143,6 @@ class AudienceTest extends TestCase
         $this->audience->setAll(true);
         
         $data = $this->audience->toArray();
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('all', $data);
         $this->assertTrue($data['all']);
     }
@@ -154,7 +153,6 @@ class AudienceTest extends TestCase
         $this->audience->setAlias($aliases);
         
         $data = $this->audience->toArray();
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('alias', $data);
         $this->assertSame($aliases, $data['alias']);
     }

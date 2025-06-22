@@ -11,7 +11,7 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: DeviceRepository::class)]
 #[ORM\Table(name: 'ims_jiguang_push_device', options: ['comment' => '设备信息'])]
-class Device
+class Device implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -23,13 +23,13 @@ class Device
     #[ORM\JoinColumn(nullable: false)]
     private ?Account $account = null;
 
-    #[ORM\Column(length: 64, unique: true)]
+    #[ORM\Column(length: 64, unique: true, options: ['comment' => '设备注册ID'])]
     private ?string $registrationId = null;
 
-    #[ORM\Column(length: 120, nullable: true)]
+    #[ORM\Column(length: 120, nullable: true, options: ['comment' => '设备别名'])]
     private ?string $alias = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
+    #[ORM\Column(length: 30, nullable: true, options: ['comment' => '手机号'])]
     private ?string $mobile = null;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'devices', fetch: 'EXTRA_LAZY')]
@@ -115,4 +115,9 @@ class Device
         $this->tags->removeElement($tag);
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->alias ?? $this->registrationId ?? 'Device #' . $this->id;
     }}

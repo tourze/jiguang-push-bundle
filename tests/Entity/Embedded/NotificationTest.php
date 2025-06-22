@@ -92,8 +92,6 @@ class NotificationTest extends TestCase
         $this->notification->setAlert($alert);
         
         $data = $this->notification->toArray();
-        
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('alert', $data);
         $this->assertSame($alert, $data['alert']);
         
@@ -138,8 +136,6 @@ class NotificationTest extends TestCase
         $this->notification->setVoip($voip);
         
         $data = $this->notification->toArray();
-        
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('alert', $data);
         $this->assertArrayHasKey('android', $data);
         $this->assertArrayHasKey('ios', $data);
@@ -189,8 +185,6 @@ class NotificationTest extends TestCase
         // 其他平台保持为null
         
         $data = $this->notification->toArray();
-        
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('alert', $data);
         $this->assertArrayHasKey('android', $data);
         $this->assertArrayHasKey('ios', $data);

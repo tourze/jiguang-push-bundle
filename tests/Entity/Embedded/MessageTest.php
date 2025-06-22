@@ -61,8 +61,6 @@ class MessageTest extends TestCase
         $this->message->setMsgContent($content);
 
         $data = $this->message->toArray();
-
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('msg_content', $data);
         $this->assertSame($content, $data['msg_content']);
 
@@ -85,8 +83,6 @@ class MessageTest extends TestCase
         $this->message->setExtras($extras);
 
         $data = $this->message->toArray();
-
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('msg_content', $data);
         $this->assertArrayHasKey('title', $data);
         $this->assertArrayHasKey('content_type', $data);
@@ -108,8 +104,6 @@ class MessageTest extends TestCase
         // contentType和extras保持为null
 
         $data = $this->message->toArray();
-
-        $this->assertIsArray($data);
         $this->assertArrayHasKey('msg_content', $data);
         $this->assertArrayHasKey('title', $data);
         $this->assertArrayNotHasKey('content_type', $data);

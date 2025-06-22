@@ -19,7 +19,7 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
  */
 #[ORM\Entity(repositoryClass: PushRepository::class)]
 #[ORM\Table(name: 'ims_jiguang_push_request', options: ['comment' => '推送消息'])]
-class Push implements Arrayable
+class Push implements Arrayable, \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -31,7 +31,7 @@ class Push implements Arrayable
     #[ORM\JoinColumn(nullable: false)]
     private Account $account;
 
-    #[ORM\Column(type: 'string', enumType: PlatformEnum::class, options: ['comment' => '推送平台'])]
+    #[ORM\Column(type: Types::STRING, enumType: PlatformEnum::class, options: ['comment' => '推送平台'])]
     private PlatformEnum $platform;
 
     #[ORM\Embedded(class: Audience::class)]
@@ -203,4 +203,9 @@ class Push implements Arrayable
         // }
 
         return array_filter($data);
+    }
+
+    public function __toString(): string
+    {
+        return 'Push #' . $this->id . ' - ' . $this->platform->value;
     }}
