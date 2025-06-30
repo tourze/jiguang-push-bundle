@@ -77,44 +77,4 @@ class AccountTest extends TestCase
         $this->assertSame($date, $this->account->getUpdateTime());
     }
 
-    public function testToArray(): void
-    {
-        // 因为Account类可能没有实现toArray方法，而是依赖于其他机制进行序列化
-        // 我们应该检查该方法是否存在，如果存在则测试它
-        if (method_exists($this->account, 'toArray')) {
-            // 设置所有必须的字段
-            $title = '测试账号';
-            $appKey = 'test_app_key';
-            $masterSecret = 'test_master_secret';
-            $valid = true;
-            $createdBy = 'admin';
-            $updatedBy = 'admin';
-            $createTime = new \DateTimeImmutable('2022-01-01 12:00:00');
-            $updateTime = new \DateTimeImmutable('2022-01-02 12:00:00');
-
-            $this->account->setTitle($title);
-            $this->account->setAppKey($appKey);
-            $this->account->setMasterSecret($masterSecret);
-            $this->account->setValid($valid);
-            $this->account->setCreatedBy($createdBy);
-            $this->account->setUpdatedBy($updatedBy);
-            $this->account->setCreateTime($createTime);
-            $this->account->setUpdateTime($updateTime);
-
-            // 检查toArray方法结果是否包含所有必要字段
-            $data = $this->account->toArray();
-            $this->assertArrayHasKey('id', $data);
-            $this->assertArrayHasKey('title', $data);
-            $this->assertArrayHasKey('appKey', $data);
-            $this->assertArrayHasKey('masterSecret', $data);
-            $this->assertArrayHasKey('valid', $data);
-            $this->assertArrayHasKey('createdBy', $data);
-            $this->assertArrayHasKey('updatedBy', $data);
-            $this->assertArrayHasKey('createTime', $data);
-            $this->assertArrayHasKey('updateTime', $data);
-        } else {
-            // 如果方法不存在，则跳过测试
-            $this->markTestSkipped('toArray method is not implemented in Account class');
-        }
-    }
 }

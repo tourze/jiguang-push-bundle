@@ -10,7 +10,7 @@ use Tourze\EnumExtra\SelectTrait;
 
 /**
  * 通知提醒方式。
- * 
+ *
  * 二进制表示：0111
  * - 左数第二位代表 light
  * - 第三位代表 vibrate

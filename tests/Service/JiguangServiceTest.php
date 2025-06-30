@@ -15,9 +15,7 @@ class JiguangServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->service = $this->getMockBuilder(JiguangService::class)
-            ->onlyMethods(['request'])
-            ->getMock();
+        $this->service = new JiguangService();
     }
 
     /**
@@ -120,14 +118,5 @@ class JiguangServiceTest extends TestCase
         $this->assertArrayHasKey('sendno', $result);
         $this->assertSame('12345', $result['msg_id']);
         $this->assertSame('54321', $result['sendno']);
-    }
-
-    /**
-     * 测试完整的请求流程，但由于无法模拟整个HTTP请求过程，
-     * 我们将跳过这个测试，或者使用更高级的集成测试方法。
-     */
-    public function testFullRequestFlow(): void
-    {
-        $this->markTestSkipped('此测试需要模拟完整的HTTP请求流程，超出了单元测试范围');
     }
 } 

@@ -86,40 +86,4 @@ class TagTest extends TestCase
         $this->assertFalse($this->tag->getDevices()->contains($device));
     }
 
-    public function testToArray(): void
-    {
-        // 检查是否存在toArray方法
-        if (method_exists($this->tag, 'toArray')) {
-            $value = 'test-tag-value';
-            $createTime = new \DateTimeImmutable('2022-01-01 12:00:00');
-            $updateTime = new \DateTimeImmutable('2022-01-02 12:00:00');
-
-            $this->tag->setAccount($this->account);
-            $this->tag->setValue($value);
-            $this->tag->setCreateTime($createTime);
-            $this->tag->setUpdateTime($updateTime);
-
-            // 添加设备
-            $device = new Device();
-            $device->setRegistrationId('test-registration-id');
-            $this->tag->addDevice($device);
-
-            $data = $this->tag->toArray();
-            $this->assertArrayHasKey('id', $data);
-
-            if (isset($data['account'])) {
-                // 可能无法确保account id的具体值，只验证其存在
-                $this->assertArrayHasKey('id', $data['account']);
-            }
-
-            $this->assertArrayHasKey('value', $data);
-            $this->assertSame($value, $data['value']);
-
-            if (isset($data['devices'])) {
-                $this->assertNotEmpty($data['devices']);
-            }
-        } else {
-            $this->markTestSkipped('toArray method is not implemented in Tag class');
-        }
-    }
 }

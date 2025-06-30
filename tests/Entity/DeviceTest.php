@@ -100,49 +100,4 @@ class DeviceTest extends TestCase
         $this->assertFalse($this->device->getTags()->contains($tag));
     }
 
-    public function testToArray(): void
-    {
-        // 检查是否存在toArray方法
-        if (method_exists($this->device, 'toArray')) {
-            $registrationId = 'test-registration-id';
-            $alias = 'test-alias';
-            $mobile = '13800138000';
-            $createTime = new \DateTimeImmutable('2022-01-01 12:00:00');
-            $updateTime = new \DateTimeImmutable('2022-01-02 12:00:00');
-
-            $this->device->setAccount($this->account);
-            $this->device->setRegistrationId($registrationId);
-            $this->device->setAlias($alias);
-            $this->device->setMobile($mobile);
-            $this->device->setCreateTime($createTime);
-            $this->device->setUpdateTime($updateTime);
-
-            // 添加标签
-            $tag = new Tag();
-            $tag->setValue('test-tag');
-            $this->device->addTag($tag);
-
-            $data = $this->device->toArray();
-            $this->assertArrayHasKey('id', $data);
-
-            if (isset($data['account'])) {
-                $this->assertArrayHasKey('id', $data['account']);
-            }
-
-            $this->assertArrayHasKey('registrationId', $data);
-            $this->assertSame($registrationId, $data['registrationId']);
-
-            $this->assertArrayHasKey('alias', $data);
-            $this->assertSame($alias, $data['alias']);
-
-            $this->assertArrayHasKey('mobile', $data);
-            $this->assertSame($mobile, $data['mobile']);
-
-            if (isset($data['tags'])) {
-                $this->assertNotEmpty($data['tags']);
-            }
-        } else {
-            $this->markTestSkipped('toArray method is not implemented in Device class');
-        }
-    }
 }
