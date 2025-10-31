@@ -11,6 +11,7 @@ use Tourze\Arrayable\Arrayable;
  * Android 平台上的通知。
  *
  * @see https://docs.jiguang.cn/jpush/server/push/rest_api_v3_push#android
+ * @implements Arrayable<string, mixed>
  */
 #[ORM\Embeddable]
 class AndroidNotification implements Arrayable
@@ -64,7 +65,7 @@ class AndroidNotification implements Arrayable
      * 2: 收件箱
      * 3: 大图片
      */
-    #[ORM\Column(type: 'string', enumType: StyleEnum::class, options: ['comment' => '通知栏样式类型'])]
+    #[ORM\Column(type: 'string', enumType: StyleEnum::class, nullable: true, options: ['comment' => '通知栏样式类型'])]
     private ?StyleEnum $style = null;
 
     /**
@@ -80,7 +81,7 @@ class AndroidNotification implements Arrayable
      * 6: 震动和闪灯
      * 7: 声音、震动和闪灯
      */
-    #[ORM\Column(type: 'string', enumType: AlertTypeEnum::class, options: ['comment' => '通知提醒方式'])]
+    #[ORM\Column(type: 'string', enumType: AlertTypeEnum::class, nullable: true, options: ['comment' => '通知提醒方式'])]
     private ?AlertTypeEnum $alertType = null;
 
     /**
@@ -93,6 +94,7 @@ class AndroidNotification implements Arrayable
     /**
      * 收件箱通知栏样式。
      * 当 style = 3 时可用，为一个字符串数组，会被通知栏以收件箱的形式展示出来。
+     * @var array<string>|null
      */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '收件箱通知栏样式'])]
     private ?array $inbox = null;
@@ -135,6 +137,7 @@ class AndroidNotification implements Arrayable
     /**
      * 指定跳转页面。
      * 指定跳转页面（仅安卓支持），该字段为 JSON 格式。
+     * @var array<string, mixed>|null
      */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '指定跳转页面'])]
     private ?array $intent = null;
@@ -199,11 +202,9 @@ class AndroidNotification implements Arrayable
         return $this->alert;
     }
 
-    public function setAlert(?string $alert): static
+    public function setAlert(?string $alert): void
     {
         $this->alert = $alert;
-
-        return $this;
     }
 
     public function getTitle(): ?string
@@ -211,11 +212,9 @@ class AndroidNotification implements Arrayable
         return $this->title;
     }
 
-    public function setTitle(?string $title): static
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 
     public function getBuilderId(): ?int
@@ -223,11 +222,9 @@ class AndroidNotification implements Arrayable
         return $this->builderId;
     }
 
-    public function setBuilderId(?int $builderId): static
+    public function setBuilderId(?int $builderId): void
     {
         $this->builderId = $builderId;
-
-        return $this;
     }
 
     public function getPriority(): ?int
@@ -235,11 +232,9 @@ class AndroidNotification implements Arrayable
         return $this->priority;
     }
 
-    public function setPriority(?int $priority): static
+    public function setPriority(?int $priority): void
     {
         $this->priority = $priority;
-
-        return $this;
     }
 
     public function getCategory(): ?string
@@ -247,11 +242,9 @@ class AndroidNotification implements Arrayable
         return $this->category;
     }
 
-    public function setCategory(?string $category): static
+    public function setCategory(?string $category): void
     {
         $this->category = $category;
-
-        return $this;
     }
 
     public function getStyle(): ?StyleEnum
@@ -259,11 +252,9 @@ class AndroidNotification implements Arrayable
         return $this->style;
     }
 
-    public function setStyle(?StyleEnum $style): static
+    public function setStyle(?StyleEnum $style): void
     {
         $this->style = $style;
-
-        return $this;
     }
 
     public function getAlertType(): ?AlertTypeEnum
@@ -271,11 +262,9 @@ class AndroidNotification implements Arrayable
         return $this->alertType;
     }
 
-    public function setAlertType(?AlertTypeEnum $alertType): static
+    public function setAlertType(?AlertTypeEnum $alertType): void
     {
         $this->alertType = $alertType;
-
-        return $this;
     }
 
     public function getLargeIcon(): ?string
@@ -283,23 +272,25 @@ class AndroidNotification implements Arrayable
         return $this->largeIcon;
     }
 
-    public function setLargeIcon(?string $largeIcon): static
+    public function setLargeIcon(?string $largeIcon): void
     {
         $this->largeIcon = $largeIcon;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getIntent(): ?array
     {
         return $this->intent;
     }
 
-    public function setIntent(?array $intent): static
+    /**
+     * @param array<string, mixed>|null $intent
+     */
+    public function setIntent(?array $intent): void
     {
         $this->intent = $intent;
-
-        return $this;
     }
 
     public function getExtras(): ?AndroidNotificationExtras
@@ -307,11 +298,9 @@ class AndroidNotification implements Arrayable
         return $this->extras;
     }
 
-    public function setExtras(?AndroidNotificationExtras $extras): static
+    public function setExtras(?AndroidNotificationExtras $extras): void
     {
         $this->extras = $extras;
-
-        return $this;
     }
 
     public function getSound(): ?string
@@ -319,11 +308,9 @@ class AndroidNotification implements Arrayable
         return $this->sound;
     }
 
-    public function setSound(?string $sound): static
+    public function setSound(?string $sound): void
     {
         $this->sound = $sound;
-
-        return $this;
     }
 
     public function getBigText(): ?string
@@ -331,11 +318,9 @@ class AndroidNotification implements Arrayable
         return $this->bigText;
     }
 
-    public function setBigText(?string $bigText): static
+    public function setBigText(?string $bigText): void
     {
         $this->bigText = $bigText;
-
-        return $this;
     }
 
     public function getBigPicPath(): ?string
@@ -343,23 +328,25 @@ class AndroidNotification implements Arrayable
         return $this->bigPicPath;
     }
 
-    public function setBigPicPath(?string $bigPicPath): static
+    public function setBigPicPath(?string $bigPicPath): void
     {
         $this->bigPicPath = $bigPicPath;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getInbox(): ?array
     {
         return $this->inbox;
     }
 
-    public function setInbox(?array $inbox): static
+    /**
+     * @param array<string>|null $inbox
+     */
+    public function setInbox(?array $inbox): void
     {
         $this->inbox = $inbox;
-
-        return $this;
     }
 
     public function getChannelId(): ?string
@@ -367,11 +354,9 @@ class AndroidNotification implements Arrayable
         return $this->channelId;
     }
 
-    public function setChannelId(?string $channelId): static
+    public function setChannelId(?string $channelId): void
     {
         $this->channelId = $channelId;
-
-        return $this;
     }
 
     public function getSmallIconUri(): ?string
@@ -379,11 +364,9 @@ class AndroidNotification implements Arrayable
         return $this->smallIconUri;
     }
 
-    public function setSmallIconUri(?string $smallIconUri): static
+    public function setSmallIconUri(?string $smallIconUri): void
     {
         $this->smallIconUri = $smallIconUri;
-
-        return $this;
     }
 
     public function getIconBgColor(): ?string
@@ -391,11 +374,9 @@ class AndroidNotification implements Arrayable
         return $this->iconBgColor;
     }
 
-    public function setIconBgColor(?string $iconBgColor): static
+    public function setIconBgColor(?string $iconBgColor): void
     {
         $this->iconBgColor = $iconBgColor;
-
-        return $this;
     }
 
     public function getUriActivity(): ?string
@@ -403,11 +384,9 @@ class AndroidNotification implements Arrayable
         return $this->uriActivity;
     }
 
-    public function setUriActivity(?string $uriActivity): static
+    public function setUriActivity(?string $uriActivity): void
     {
         $this->uriActivity = $uriActivity;
-
-        return $this;
     }
 
     public function getUriAction(): ?string
@@ -415,11 +394,9 @@ class AndroidNotification implements Arrayable
         return $this->uriAction;
     }
 
-    public function setUriAction(?string $uriAction): static
+    public function setUriAction(?string $uriAction): void
     {
         $this->uriAction = $uriAction;
-
-        return $this;
     }
 
     public function getBadgeAddNum(): ?int
@@ -427,11 +404,9 @@ class AndroidNotification implements Arrayable
         return $this->badgeAddNum;
     }
 
-    public function setBadgeAddNum(?int $badgeAddNum): static
+    public function setBadgeAddNum(?int $badgeAddNum): void
     {
         $this->badgeAddNum = $badgeAddNum;
-
-        return $this;
     }
 
     public function getBadgeSetNum(): ?int
@@ -439,11 +414,9 @@ class AndroidNotification implements Arrayable
         return $this->badgeSetNum;
     }
 
-    public function setBadgeSetNum(?int $badgeSetNum): static
+    public function setBadgeSetNum(?int $badgeSetNum): void
     {
         $this->badgeSetNum = $badgeSetNum;
-
-        return $this;
     }
 
     public function getBadgeClass(): ?string
@@ -451,11 +424,9 @@ class AndroidNotification implements Arrayable
         return $this->badgeClass;
     }
 
-    public function setBadgeClass(?string $badgeClass): static
+    public function setBadgeClass(?string $badgeClass): void
     {
         $this->badgeClass = $badgeClass;
-
-        return $this;
     }
 
     public function getShowBeginTime(): ?string
@@ -463,11 +434,9 @@ class AndroidNotification implements Arrayable
         return $this->showBeginTime;
     }
 
-    public function setShowBeginTime(?string $showBeginTime): static
+    public function setShowBeginTime(?string $showBeginTime): void
     {
         $this->showBeginTime = $showBeginTime;
-
-        return $this;
     }
 
     public function getShowEndTime(): ?string
@@ -475,11 +444,9 @@ class AndroidNotification implements Arrayable
         return $this->showEndTime;
     }
 
-    public function setShowEndTime(?string $showEndTime): static
+    public function setShowEndTime(?string $showEndTime): void
     {
         $this->showEndTime = $showEndTime;
-
-        return $this;
     }
 
     public function isDisplayForeground(): ?bool
@@ -487,13 +454,14 @@ class AndroidNotification implements Arrayable
         return $this->displayForeground;
     }
 
-    public function setDisplayForeground(?bool $displayForeground): static
+    public function setDisplayForeground(?bool $displayForeground): void
     {
         $this->displayForeground = $displayForeground;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -521,6 +489,6 @@ class AndroidNotification implements Arrayable
             'display_foreground' => $this->isDisplayForeground(),
             'extras' => $this->getExtras()?->toArray(),
             'sound' => $this->getSound(),
-        ]);
+        ], fn ($value) => null !== $value);
     }
 }

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JiguangPushBundle\Repository\TagRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -15,18 +16,24 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 class Tag implements \Stringable
 {
     use TimestampableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => '主键'])]
-    private ?int $id = 0;
+    private int $id = 0;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Account $account = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 40)]
     #[ORM\Column(length: 40, options: ['comment' => '标签值'])]
     private ?string $value = null;
 
+    /**
+     * @var Collection<int, Device>
+     */
     #[ORM\ManyToMany(targetEntity: Device::class, mappedBy: 'tags', fetch: 'EXTRA_LAZY')]
     private Collection $devices;
 
@@ -35,7 +42,7 @@ class Tag implements \Stringable
         $this->devices = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -45,11 +52,9 @@ class Tag implements \Stringable
         return $this->account;
     }
 
-    public function setAccount(?Account $account): static
+    public function setAccount(?Account $account): void
     {
         $this->account = $account;
-
-        return $this;
     }
 
     public function getValue(): ?string
@@ -57,11 +62,9 @@ class Tag implements \Stringable
         return $this->value;
     }
 
-    public function setValue(string $value): static
+    public function setValue(string $value): void
     {
         $this->value = $value;
-
-        return $this;
     }
 
     /**
@@ -72,26 +75,28 @@ class Tag implements \Stringable
         return $this->devices;
     }
 
-    public function addDevice(Device $device): static
+    public function addDevice(Device $device): void
     {
         if (!$this->devices->contains($device)) {
             $this->devices->add($device);
             $device->addTag($this);
         }
-
-        return $this;
     }
 
-    public function removeDevice(Device $device): static
+    public function removeDevice(Device $device): void
     {
         if ($this->devices->removeElement($device)) {
             $device->removeTag($this);
         }
+    }
 
-        return $this;
+    public function getDevicesCount(): int
+    {
+        return $this->devices->count();
     }
 
     public function __toString(): string
     {
         return $this->value ?? 'Tag #' . $this->id;
-    }}
+    }
+}

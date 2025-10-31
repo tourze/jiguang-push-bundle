@@ -8,190 +8,214 @@ use JiguangPushBundle\Entity\Embedded\IosNotification;
 use JiguangPushBundle\Entity\Embedded\Notification;
 use JiguangPushBundle\Entity\Embedded\QuickAppNotification;
 use JiguangPushBundle\Entity\Embedded\VoipNotification;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class NotificationTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Notification::class)]
+final class NotificationTest extends TestCase
 {
-    private Notification $notification;
-
-    protected function setUp(): void
+    protected function createEntity(): Notification
     {
-        $this->notification = new Notification();
+        return new Notification();
     }
 
-    public function testGetSetAlert(): void
+    #[DataProvider('propertiesProvider')]
+    public function testGettersAndSetters(string $property, mixed $value): void
     {
-        $alert = '测试通知内容';
-        $this->notification->setAlert($alert);
-        $this->assertSame($alert, $this->notification->getAlert());
-    }
+        $entity = $this->createEntity();
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $isGetter = 'is' . ucfirst($property);
 
-    public function testGetSetAndroid(): void
-    {
-        $android = new AndroidNotification();
-        $android->setAlert('Android通知');
-        
-        $this->notification->setAndroid($android);
-        $this->assertSame($android, $this->notification->getAndroid());
-        
-        $this->notification->setAndroid(null);
-        $this->assertNull($this->notification->getAndroid());
-    }
+        $this->assertTrue(method_exists($entity, $setter), "Setter {$setter} does not exist");
 
-    public function testGetSetIos(): void
-    {
-        $ios = new IosNotification();
-        $ios->setAlert('iOS通知');
-        
-        $this->notification->setIos($ios);
-        $this->assertSame($ios, $this->notification->getIos());
-        
-        $this->notification->setIos(null);
-        $this->assertNull($this->notification->getIos());
-    }
-
-    public function testGetSetHmos(): void
-    {
-        $hmos = new HmosNotification();
-        $hmos->setAlert('HMOS通知');
-        
-        $this->notification->setHmos($hmos);
-        $this->assertSame($hmos, $this->notification->getHmos());
-        
-        $this->notification->setHmos(null);
-        $this->assertNull($this->notification->getHmos());
-    }
-
-    public function testGetSetQuickapp(): void
-    {
-        $quickapp = new QuickAppNotification();
-        $quickapp->setAlert('快应用通知');
-        
-        $this->notification->setQuickapp($quickapp);
-        $this->assertSame($quickapp, $this->notification->getQuickapp());
-        
-        $this->notification->setQuickapp(null);
-        $this->assertNull($this->notification->getQuickapp());
-    }
-
-    public function testGetSetVoip(): void
-    {
-        $voip = new VoipNotification();
-        $voip->setContent(['alert' => 'VoIP通知']);
-        
-        $this->notification->setVoip($voip);
-        $this->assertSame($voip, $this->notification->getVoip());
-        
-        $this->notification->setVoip(null);
-        $this->assertNull($this->notification->getVoip());
-    }
-
-    public function testToArrayWithOnlyAlert(): void
-    {
-        $alert = '测试通知内容';
-        $this->notification->setAlert($alert);
-        
-        $data = $this->notification->toArray();
-        $this->assertArrayHasKey('alert', $data);
-        $this->assertSame($alert, $data['alert']);
-        
-        // 平台特定通知不应存在
-        $this->assertArrayNotHasKey('android', $data);
-        $this->assertArrayNotHasKey('ios', $data);
-        $this->assertArrayNotHasKey('hmos', $data);
-        $this->assertArrayNotHasKey('quickapp', $data);
-        $this->assertArrayNotHasKey('voip', $data);
-    }
-
-    public function testToArrayWithAllPlatforms(): void
-    {
-        $alert = '通用通知内容';
-        $this->notification->setAlert($alert);
-        
-        // 设置Android通知
-        $android = new AndroidNotification();
-        $android->setAlert('Android通知');
-        $android->setTitle('Android标题');
-        $this->notification->setAndroid($android);
-        
-        // 设置iOS通知
-        $ios = new IosNotification();
-        $ios->setAlert('iOS通知');
-        $ios->setBadge(5);
-        $this->notification->setIos($ios);
-        
-        // 设置HMOS通知
-        $hmos = new HmosNotification();
-        $hmos->setAlert('HMOS通知');
-        $this->notification->setHmos($hmos);
-        
-        // 设置快应用通知
-        $quickapp = new QuickAppNotification();
-        $quickapp->setAlert('快应用通知');
-        $this->notification->setQuickapp($quickapp);
-        
-        // 设置VoIP通知
-        $voip = new VoipNotification();
-        $voip->setContent(['alert' => 'VoIP通知']);
-        $this->notification->setVoip($voip);
-        
-        $data = $this->notification->toArray();
-        $this->assertArrayHasKey('alert', $data);
-        $this->assertArrayHasKey('android', $data);
-        $this->assertArrayHasKey('ios', $data);
-        $this->assertArrayHasKey('hmos', $data);
-        $this->assertArrayHasKey('quickapp', $data);
-        $this->assertArrayHasKey('voip', $data);
-        
-        $this->assertSame($alert, $data['alert']);
-        
-        // 验证平台特定通知内容
-        $this->assertIsArray($data['android']);
-        $this->assertArrayHasKey('alert', $data['android']);
-        $this->assertSame('Android通知', $data['android']['alert']);
-        
-        $this->assertIsArray($data['ios']);
-        $this->assertArrayHasKey('alert', $data['ios']);
-        $this->assertSame('iOS通知', $data['ios']['alert']);
-        
-        $this->assertIsArray($data['hmos']);
-        $this->assertArrayHasKey('alert', $data['hmos']);
-        $this->assertSame('HMOS通知', $data['hmos']['alert']);
-        
-        $this->assertIsArray($data['quickapp']);
-        $this->assertArrayHasKey('alert', $data['quickapp']);
-        $this->assertSame('快应用通知', $data['quickapp']['alert']);
-        
-        $this->assertIsArray($data['voip']);
-        if (isset($data['voip']['alert'])) {
-            $this->assertSame('VoIP通知', $data['voip']['alert']);
+        // Check if it's a boolean getter (is* method) or regular getter (get* method)
+        if (method_exists($entity, $isGetter)) {
+            $getter = $isGetter;
         }
+
+        $this->assertTrue(method_exists($entity, $getter), "Getter {$getter} does not exist");
+
+        $setterCallable = [$entity, $setter];
+        self::assertIsCallable($setterCallable);
+        call_user_func($setterCallable, $value);
+
+        $getterCallable = [$entity, $getter];
+        self::assertIsCallable($getterCallable);
+        $this->assertSame($value, call_user_func($getterCallable), 'Getter should return the set value');
     }
 
-    public function testToArrayOmitsNullPlatforms(): void
+    public static function propertiesProvider(): \Generator
     {
-        $alert = '通用通知内容';
-        $this->notification->setAlert($alert);
-        
-        // 只设置部分平台通知
-        $android = new AndroidNotification();
-        $android->setAlert('Android通知');
-        $this->notification->setAndroid($android);
-        
-        $ios = new IosNotification();
-        $ios->setAlert('iOS通知');
-        $this->notification->setIos($ios);
-        
-        // 其他平台保持为null
-        
-        $data = $this->notification->toArray();
-        $this->assertArrayHasKey('alert', $data);
-        $this->assertArrayHasKey('android', $data);
-        $this->assertArrayHasKey('ios', $data);
-        $this->assertArrayNotHasKey('hmos', $data);
-        $this->assertArrayNotHasKey('quickapp', $data);
-        $this->assertArrayNotHasKey('voip', $data);
-        
-        $this->assertSame($alert, $data['alert']);
+        yield 'alert' => ['alert', 'Test notification alert'];
+        yield 'android' => ['android', new AndroidNotification()];
+        yield 'ios' => ['ios', new IosNotification()];
+        yield 'hmos' => ['hmos', new HmosNotification()];
+        yield 'quickapp' => ['quickapp', new QuickAppNotification()];
+        yield 'voip' => ['voip', new VoipNotification()];
     }
-} 
+
+    public function testToArrayReturnsAlertOnly(): void
+    {
+        $notification = $this->createEntity();
+        $notification->setAlert('Test alert');
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals(['alert' => 'Test alert'], $result);
+    }
+
+    public function testToArrayReturnsEmptyArrayWhenAllNull(): void
+    {
+        $notification = $this->createEntity();
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
+    public function testToArrayIncludesAndroidNotification(): void
+    {
+        $notification = $this->createEntity();
+        $android = new AndroidNotification();
+        $android->setTitle('Android Title');
+        $android->setAlert('Android Alert');
+        $notification->setAndroid($android);
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('android', $result);
+        $this->assertEquals([
+            'alert' => 'Android Alert',
+            'title' => 'Android Title',
+        ], $result['android']);
+    }
+
+    public function testToArrayIncludesIosNotification(): void
+    {
+        $notification = $this->createEntity();
+        $ios = new IosNotification();
+        $ios->setAlert('iOS Alert');
+        $ios->setSound('default');
+        $notification->setIos($ios);
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('ios', $result);
+        $this->assertEquals([
+            'alert' => 'iOS Alert',
+            'sound' => 'default',
+        ], $result['ios']);
+    }
+
+    public function testToArrayIncludesHmosNotification(): void
+    {
+        $notification = $this->createEntity();
+        $hmos = new HmosNotification();
+        $hmos->setTitle('HarmonyOS Title');
+        $hmos->setTestMessage(true);
+        $notification->setHmos($hmos);
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('hmos', $result);
+        $this->assertEquals([
+            'title' => 'HarmonyOS Title',
+            'test_message' => true,
+        ], $result['hmos']);
+    }
+
+    public function testToArrayIncludesQuickAppNotification(): void
+    {
+        $notification = $this->createEntity();
+        $quickapp = new QuickAppNotification();
+        $quickapp->setTitle('QuickApp Title');
+        $notification->setQuickapp($quickapp);
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('quickapp', $result);
+        $this->assertEquals([
+            'title' => 'QuickApp Title',
+        ], $result['quickapp']);
+    }
+
+    public function testToArrayIncludesVoipNotification(): void
+    {
+        $notification = $this->createEntity();
+        $voip = new VoipNotification();
+        $voip->setContent(['title' => 'VoIP Title', 'sound' => 'ringtone.caf']);
+        $notification->setVoip($voip);
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('voip', $result);
+        $this->assertEquals([
+            'title' => 'VoIP Title',
+            'sound' => 'ringtone.caf',
+        ], $result['voip']);
+    }
+
+    public function testToArrayCombinesAlertAndPlatformNotifications(): void
+    {
+        $notification = $this->createEntity();
+        $notification->setAlert('Global Alert');
+
+        $android = new AndroidNotification();
+        $android->setTitle('Android Title');
+        $notification->setAndroid($android);
+
+        $ios = new IosNotification();
+        $ios->setSound('default');
+        $notification->setIos($ios);
+
+        $result = $notification->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals([
+            'alert' => 'Global Alert',
+            'android' => [
+                'title' => 'Android Title',
+            ],
+            'ios' => [
+                'sound' => 'default',
+            ],
+        ], $result);
+    }
+
+    public function testSettersWork(): void
+    {
+        $notification = $this->createEntity();
+
+        $notification->setAlert('Test Alert');
+        $notification->setAndroid(new AndroidNotification());
+        $notification->setIos(new IosNotification());
+
+        $this->assertEquals('Test Alert', $notification->getAlert());
+        $this->assertInstanceOf(AndroidNotification::class, $notification->getAndroid());
+        $this->assertInstanceOf(IosNotification::class, $notification->getIos());
+    }
+
+    public function testNullValueHandling(): void
+    {
+        $notification = $this->createEntity();
+
+        $this->assertNull($notification->getAlert());
+        $this->assertNull($notification->getAndroid());
+        $this->assertNull($notification->getIos());
+        $this->assertNull($notification->getHmos());
+        $this->assertNull($notification->getQuickapp());
+        $this->assertNull($notification->getVoip());
+    }
+}

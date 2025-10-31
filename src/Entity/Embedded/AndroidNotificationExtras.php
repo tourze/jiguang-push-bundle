@@ -9,6 +9,7 @@ use Tourze\Arrayable\Arrayable;
  * Android 通知的扩展字段。
  *
  * @see https://docs.jiguang.cn/jpush/server/push/rest_api_v3_push#android
+ * @implements Arrayable<string, mixed>
  */
 #[ORM\Embeddable]
 class AndroidNotificationExtras implements Arrayable
@@ -46,11 +47,9 @@ class AndroidNotificationExtras implements Arrayable
         return $this->mipnsContentForshort;
     }
 
-    public function setMipnsContentForshort(?string $mipnsContentForshort): static
+    public function setMipnsContentForshort(?string $mipnsContentForshort): void
     {
         $this->mipnsContentForshort = $mipnsContentForshort;
-
-        return $this;
     }
 
     public function getOppnsContentForshort(): ?string
@@ -58,11 +57,9 @@ class AndroidNotificationExtras implements Arrayable
         return $this->oppnsContentForshort;
     }
 
-    public function setOppnsContentForshort(?string $oppnsContentForshort): static
+    public function setOppnsContentForshort(?string $oppnsContentForshort): void
     {
         $this->oppnsContentForshort = $oppnsContentForshort;
-
-        return $this;
     }
 
     public function getVpnsContentForshort(): ?string
@@ -70,11 +67,9 @@ class AndroidNotificationExtras implements Arrayable
         return $this->vpnsContentForshort;
     }
 
-    public function setVpnsContentForshort(?string $vpnsContentForshort): static
+    public function setVpnsContentForshort(?string $vpnsContentForshort): void
     {
         $this->vpnsContentForshort = $vpnsContentForshort;
-
-        return $this;
     }
 
     public function getMzpnsContentForshort(): ?string
@@ -82,13 +77,14 @@ class AndroidNotificationExtras implements Arrayable
         return $this->mzpnsContentForshort;
     }
 
-    public function setMzpnsContentForshort(?string $mzpnsContentForshort): static
+    public function setMzpnsContentForshort(?string $mzpnsContentForshort): void
     {
         $this->mzpnsContentForshort = $mzpnsContentForshort;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -96,6 +92,6 @@ class AndroidNotificationExtras implements Arrayable
             'oppns_content_forshort' => $this->oppnsContentForshort,
             'vpns_content_forshort' => $this->vpnsContentForshort,
             'mzpns_content_forshort' => $this->mzpnsContentForshort,
-        ]);
+        ], fn ($value) => null !== $value);
     }
 }

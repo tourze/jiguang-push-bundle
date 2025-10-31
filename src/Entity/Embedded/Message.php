@@ -5,6 +5,9 @@ namespace JiguangPushBundle\Entity\Embedded;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\Arrayable\Arrayable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 #[ORM\Embeddable]
 class Message implements Arrayable
 {
@@ -17,6 +20,9 @@ class Message implements Arrayable
     #[ORM\Column(type: 'string', nullable: true, options: ['comment' => '消息标题'])]
     private ?string $title = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '扩展字段'])]
     private ?array $extras = null;
 
@@ -25,11 +31,9 @@ class Message implements Arrayable
         return $this->msgContent;
     }
 
-    public function setMsgContent(?string $msgContent): static
+    public function setMsgContent(?string $msgContent): void
     {
         $this->msgContent = $msgContent;
-
-        return $this;
     }
 
     public function getContentType(): ?string
@@ -37,11 +41,9 @@ class Message implements Arrayable
         return $this->contentType;
     }
 
-    public function setContentType(?string $contentType): static
+    public function setContentType(?string $contentType): void
     {
         $this->contentType = $contentType;
-
-        return $this;
     }
 
     public function getTitle(): ?string
@@ -49,25 +51,30 @@ class Message implements Arrayable
         return $this->title;
     }
 
-    public function setTitle(?string $title): static
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getExtras(): ?array
     {
         return $this->extras;
     }
 
-    public function setExtras(?array $extras): static
+    /**
+     * @param array<string, mixed>|null $extras
+     */
+    public function setExtras(?array $extras): void
     {
         $this->extras = $extras;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -75,6 +82,6 @@ class Message implements Arrayable
             'content_type' => $this->contentType,
             'title' => $this->title,
             'extras' => $this->extras,
-        ]);
+        ], fn ($value) => null !== $value);
     }
 }

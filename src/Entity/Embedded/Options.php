@@ -5,6 +5,9 @@ namespace JiguangPushBundle\Entity\Embedded;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\Arrayable\Arrayable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 #[ORM\Embeddable]
 class Options implements Arrayable
 {
@@ -17,6 +20,9 @@ class Options implements Arrayable
     #[ORM\Column(type: 'string', nullable: true, options: ['comment' => 'APNs折叠ID'])]
     private ?string $apnsCollapseId = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '第三方渠道配置'])]
     private ?array $thirdPartyChannel = null;
 
@@ -46,11 +52,9 @@ class Options implements Arrayable
         return $this->timeToLive;
     }
 
-    public function setTimeToLive(?int $timeToLive): static
+    public function setTimeToLive(?int $timeToLive): void
     {
         $this->timeToLive = $timeToLive;
-
-        return $this;
     }
 
     public function isApnsProduction(): ?bool
@@ -58,11 +62,9 @@ class Options implements Arrayable
         return $this->apnsProduction;
     }
 
-    public function setApnsProduction(?bool $apnsProduction): static
+    public function setApnsProduction(?bool $apnsProduction): void
     {
         $this->apnsProduction = $apnsProduction;
-
-        return $this;
     }
 
     public function getApnsCollapseId(): ?string
@@ -70,23 +72,25 @@ class Options implements Arrayable
         return $this->apnsCollapseId;
     }
 
-    public function setApnsCollapseId(?string $apnsCollapseId): static
+    public function setApnsCollapseId(?string $apnsCollapseId): void
     {
         $this->apnsCollapseId = $apnsCollapseId;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getThirdPartyChannel(): ?array
     {
         return $this->thirdPartyChannel;
     }
 
-    public function setThirdPartyChannel(?array $thirdPartyChannel): static
+    /**
+     * @param array<string, mixed>|null $thirdPartyChannel
+     */
+    public function setThirdPartyChannel(?array $thirdPartyChannel): void
     {
         $this->thirdPartyChannel = $thirdPartyChannel;
-
-        return $this;
     }
 
     public function isOverride(): ?bool
@@ -94,11 +98,9 @@ class Options implements Arrayable
         return $this->override;
     }
 
-    public function setOverride(?bool $override): static
+    public function setOverride(?bool $override): void
     {
         $this->override = $override;
-
-        return $this;
     }
 
     public function getUniqueKey(): ?string
@@ -106,11 +108,9 @@ class Options implements Arrayable
         return $this->uniqueKey;
     }
 
-    public function setUniqueKey(?string $uniqueKey): static
+    public function setUniqueKey(?string $uniqueKey): void
     {
         $this->uniqueKey = $uniqueKey;
-
-        return $this;
     }
 
     public function getBigPushDuration(): ?int
@@ -118,11 +118,9 @@ class Options implements Arrayable
         return $this->bigPushDuration;
     }
 
-    public function setBigPushDuration(?int $bigPushDuration): static
+    public function setBigPushDuration(?int $bigPushDuration): void
     {
         $this->bigPushDuration = $bigPushDuration;
-
-        return $this;
     }
 
     public function isWithdrawable(): ?bool
@@ -130,11 +128,9 @@ class Options implements Arrayable
         return $this->withdrawable;
     }
 
-    public function setWithdrawable(?bool $withdrawable): static
+    public function setWithdrawable(?bool $withdrawable): void
     {
         $this->withdrawable = $withdrawable;
-
-        return $this;
     }
 
     public function isThirdPartyEnable(): ?bool
@@ -142,11 +138,9 @@ class Options implements Arrayable
         return $this->thirdPartyEnable;
     }
 
-    public function setThirdPartyEnable(?bool $thirdPartyEnable): static
+    public function setThirdPartyEnable(?bool $thirdPartyEnable): void
     {
         $this->thirdPartyEnable = $thirdPartyEnable;
-
-        return $this;
     }
 
     public function isCacheable(): ?bool
@@ -154,11 +148,9 @@ class Options implements Arrayable
         return $this->cacheable;
     }
 
-    public function setCacheable(?bool $cacheable): static
+    public function setCacheable(?bool $cacheable): void
     {
         $this->cacheable = $cacheable;
-
-        return $this;
     }
 
     public function isSync(): ?bool
@@ -166,13 +158,14 @@ class Options implements Arrayable
         return $this->sync;
     }
 
-    public function setSync(?bool $sync): static
+    public function setSync(?bool $sync): void
     {
         $this->sync = $sync;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -187,6 +180,6 @@ class Options implements Arrayable
             'third_party_enable' => $this->thirdPartyEnable,
             'cacheable' => $this->cacheable,
             'sync' => $this->sync,
-        ]);
+        ], fn ($value) => null !== $value);
     }
 }

@@ -5,6 +5,9 @@ namespace JiguangPushBundle\Entity\Embedded;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\Arrayable\Arrayable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 #[ORM\Embeddable]
 class QuickAppNotification implements Arrayable
 {
@@ -22,11 +25,9 @@ class QuickAppNotification implements Arrayable
         return $this->alert;
     }
 
-    public function setAlert(?string $alert): static
+    public function setAlert(?string $alert): void
     {
         $this->alert = $alert;
-
-        return $this;
     }
 
     public function getTitle(): ?string
@@ -34,11 +35,9 @@ class QuickAppNotification implements Arrayable
         return $this->title;
     }
 
-    public function setTitle(?string $title): static
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 
     public function getPage(): ?string
@@ -46,19 +45,20 @@ class QuickAppNotification implements Arrayable
         return $this->page;
     }
 
-    public function setPage(?string $page): static
+    public function setPage(?string $page): void
     {
         $this->page = $page;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
             'alert' => $this->alert,
             'title' => $this->title,
             'page' => $this->page,
-        ]);
+        ], fn ($value) => null !== $value);
     }
 }

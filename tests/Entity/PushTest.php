@@ -10,163 +10,143 @@ use JiguangPushBundle\Entity\Embedded\Notification;
 use JiguangPushBundle\Entity\Embedded\Options;
 use JiguangPushBundle\Entity\Push;
 use JiguangPushBundle\Enum\PlatformEnum;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class PushTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Push::class)]
+final class PushTest extends AbstractEntityTestCase
 {
-    private Push $push;
-    private Account $account;
-
-    protected function setUp(): void
+    protected function createEntity(): Push
     {
-        $this->push = new Push();
-        $this->account = new Account();
-        // 不能设置ID，它是自动生成的
-        $this->account->setTitle('测试账号');
-        $this->account->setAppKey('test_app_key');
-        $this->account->setMasterSecret('test_master_secret');
+        return new Push();
+    }
+
+    /** @return iterable<string, array{string, mixed}> */
+    public static function propertiesProvider(): iterable
+    {
+        yield 'platform' => ['platform', PlatformEnum::ALL];
+        yield 'cid' => ['cid', 'test-cid-12345'];
+        yield 'msgId' => ['msgId', 'test-msg-id-12345'];
+        yield 'createTime' => ['createTime', new \DateTimeImmutable()];
+        yield 'updateTime' => ['updateTime', new \DateTimeImmutable()];
     }
 
     public function testGetId(): void
     {
         // 在未设置ID的情况下，应该返回初始值
-        $this->assertNotNull($this->push->getId());
+        $entity = $this->createEntity();
+        $this->assertNotNull($entity->getId());
     }
 
     public function testGetSetAccount(): void
     {
-        $this->push->setAccount($this->account);
-        $this->assertSame($this->account, $this->push->getAccount());
-    }
+        $entity = $this->createEntity();
+        $account = new Account();
+        $account->setTitle('测试账号');
+        $account->setAppKey('test_app_key');
+        $account->setMasterSecret('test_master_secret');
 
-    public function testGetSetPlatform(): void
-    {
-        $platform = PlatformEnum::ALL;
-        $this->push->setPlatform($platform);
-        $this->assertSame($platform, $this->push->getPlatform());
+        $entity->setAccount($account);
+        $this->assertSame($account, $entity->getAccount());
     }
 
     public function testGetSetAudience(): void
     {
+        $entity = $this->createEntity();
         $audience = new Audience();
         $audience->setAll(true);
 
-        $this->push->setAudience($audience);
-        $this->assertSame($audience, $this->push->getAudience());
+        $entity->setAudience($audience);
+        $this->assertSame($audience, $entity->getAudience());
     }
 
     public function testGetSetNotification(): void
     {
+        $entity = $this->createEntity();
         $notification = new Notification();
         $notification->setAlert('测试通知');
 
-        $this->push->setNotification($notification);
-        $this->assertSame($notification, $this->push->getNotification());
+        $entity->setNotification($notification);
+        $this->assertSame($notification, $entity->getNotification());
 
-        $this->push->setNotification(null);
-        $this->assertNull($this->push->getNotification());
+        $entity->setNotification(null);
+        $this->assertNull($entity->getNotification());
     }
 
     public function testGetSetMessage(): void
     {
+        $entity = $this->createEntity();
         $message = new Message();
         $message->setMsgContent('测试消息内容');
 
-        $this->push->setMessage($message);
-        $this->assertSame($message, $this->push->getMessage());
+        $entity->setMessage($message);
+        $this->assertSame($message, $entity->getMessage());
 
-        $this->push->setMessage(null);
-        $this->assertNull($this->push->getMessage());
+        $entity->setMessage(null);
+        $this->assertNull($entity->getMessage());
     }
 
     public function testGetSetOptions(): void
     {
+        $entity = $this->createEntity();
         $options = new Options();
 
-        $this->push->setOptions($options);
-        $this->assertSame($options, $this->push->getOptions());
+        $entity->setOptions($options);
+        $this->assertSame($options, $entity->getOptions());
 
-        $this->push->setOptions(null);
-        $this->assertNull($this->push->getOptions());
+        $entity->setOptions(null);
+        $this->assertNull($entity->getOptions());
     }
 
     public function testGetSetCallback(): void
     {
+        $entity = $this->createEntity();
         $callback = new Callback();
 
-        $this->push->setCallback($callback);
-        $this->assertSame($callback, $this->push->getCallback());
+        $entity->setCallback($callback);
+        $this->assertSame($callback, $entity->getCallback());
 
-        $this->push->setCallback(null);
-        $this->assertNull($this->push->getCallback());
-    }
-
-    public function testGetSetCid(): void
-    {
-        $cid = 'test-cid-12345';
-        $this->push->setCid($cid);
-        $this->assertSame($cid, $this->push->getCid());
-
-        $this->push->setCid(null);
-        $this->assertNull($this->push->getCid());
-    }
-
-    public function testGetSetMsgId(): void
-    {
-        $msgId = 'test-msg-id-12345';
-        $this->push->setMsgId($msgId);
-        $this->assertSame($msgId, $this->push->getMsgId());
-
-        $this->push->setMsgId(null);
-        $this->assertNull($this->push->getMsgId());
-    }
-
-    public function testGetSetCreateTime(): void
-    {
-        $date = new \DateTimeImmutable();
-        $this->push->setCreateTime($date);
-        $this->assertSame($date, $this->push->getCreateTime());
-    }
-
-    public function testGetSetUpdateTime(): void
-    {
-        $date = new \DateTimeImmutable();
-        $this->push->setUpdateTime($date);
-        $this->assertSame($date, $this->push->getUpdateTime());
+        $entity->setCallback(null);
+        $this->assertNull($entity->getCallback());
     }
 
     public function testToArrayWithAllFields(): void
     {
+        $entity = $this->createEntity();
+
         // 设置必须字段
         $platform = PlatformEnum::ALL;
-        $this->push->setPlatform($platform);
+        $entity->setPlatform($platform);
 
         // 设置目标受众
         $audience = new Audience();
         $audience->setAll(true);
-        $this->push->setAudience($audience);
+        $entity->setAudience($audience);
 
         // 设置通知内容
         $notification = new Notification();
         $notification->setAlert('测试通知');
-        $this->push->setNotification($notification);
+        $entity->setNotification($notification);
 
         // 设置消息内容
         $message = new Message();
         $message->setMsgContent('测试消息内容');
-        $this->push->setMessage($message);
+        $entity->setMessage($message);
 
         // 设置选项
         $options = new Options();
-        $this->push->setOptions($options);
+        $entity->setOptions($options);
 
         // 设置回调
         $callback = new Callback();
         $callback->setUrl('https://example.com/callback');
-        $this->push->setCallback($callback);
+        $entity->setCallback($callback);
 
         // 转换为数组
-        $data = $this->push->toArray();
+        $data = $entity->toArray();
 
         // 验证基本结构
         // 验证平台
@@ -179,16 +159,19 @@ class PushTest extends TestCase
 
         // 验证通知
         $this->assertArrayHasKey('notification', $data);
+        $this->assertIsArray($data['notification'], '通知结构必须为数组');
         $this->assertArrayHasKey('alert', $data['notification']);
         $this->assertSame('测试通知', $data['notification']['alert']);
 
         // 验证消息
         $this->assertArrayHasKey('message', $data);
+        $this->assertIsArray($data['message'], '消息体必须为数组');
         $this->assertArrayHasKey('msg_content', $data['message']);
         $this->assertSame('测试消息内容', $data['message']['msg_content']);
 
         // 验证回调
         if (isset($data['callback'])) {
+            $this->assertIsArray($data['callback'], '回调结构必须为数组');
             $this->assertArrayHasKey('url', $data['callback']);
             $this->assertSame('https://example.com/callback', $data['callback']['url']);
         }
@@ -196,16 +179,18 @@ class PushTest extends TestCase
 
     public function testToArrayWithMinimalFields(): void
     {
+        $entity = $this->createEntity();
+
         // 只设置必须的字段
         $platform = PlatformEnum::ALL;
-        $this->push->setPlatform($platform);
+        $entity->setPlatform($platform);
 
         $audience = new Audience();
         $audience->setAll(true);
-        $this->push->setAudience($audience);
+        $entity->setAudience($audience);
 
         // 转换为数组
-        $data = $this->push->toArray();
+        $data = $entity->toArray();
 
         // 验证基本结构
         // 验证平台

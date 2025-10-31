@@ -9,6 +9,7 @@ use Tourze\Arrayable\Arrayable;
  * HarmonyOS 平台上的通知。
  *
  * @see https://docs.jiguang.cn/jpush/server/push/rest_api_v3_push#hmos
+ * @implements Arrayable<string, mixed>
  */
 #[ORM\Embeddable]
 class HmosNotification implements Arrayable
@@ -41,6 +42,7 @@ class HmosNotification implements Arrayable
     /**
      * 指定跳转页面。
      * 指定跳转页面（仅安卓支持），该字段为 JSON 格式。
+     * @var array<string, mixed>|null
      */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '指定跳转页面'])]
     private ?array $intent = null;
@@ -71,6 +73,7 @@ class HmosNotification implements Arrayable
 
     /**
      * 扩展字段。
+     * @var array<string, mixed>|null
      */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '扩展字段'])]
     private ?array $extras = null;
@@ -83,6 +86,7 @@ class HmosNotification implements Arrayable
 
     /**
      * 收件箱样式。
+     * @var array<string, mixed>|null
      */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '收件箱样式'])]
     private ?array $inbox = null;
@@ -95,6 +99,7 @@ class HmosNotification implements Arrayable
 
     /**
      * 额外数据。
+     * @var array<string, mixed>|null
      */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '额外数据'])]
     private ?array $extraData = null;
@@ -104,11 +109,9 @@ class HmosNotification implements Arrayable
         return $this->alert;
     }
 
-    public function setAlert(?string $alert): static
+    public function setAlert(?string $alert): void
     {
         $this->alert = $alert;
-
-        return $this;
     }
 
     public function getTitle(): ?string
@@ -116,11 +119,9 @@ class HmosNotification implements Arrayable
         return $this->title;
     }
 
-    public function setTitle(?string $title): static
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 
     public function getCategory(): ?string
@@ -128,11 +129,9 @@ class HmosNotification implements Arrayable
         return $this->category;
     }
 
-    public function setCategory(?string $category): static
+    public function setCategory(?string $category): void
     {
         $this->category = $category;
-
-        return $this;
     }
 
     public function getLargeIcon(): ?string
@@ -140,23 +139,25 @@ class HmosNotification implements Arrayable
         return $this->largeIcon;
     }
 
-    public function setLargeIcon(?string $largeIcon): static
+    public function setLargeIcon(?string $largeIcon): void
     {
         $this->largeIcon = $largeIcon;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getIntent(): ?array
     {
         return $this->intent;
     }
 
-    public function setIntent(?array $intent): static
+    /**
+     * @param array<string, mixed>|null $intent
+     */
+    public function setIntent(?array $intent): void
     {
         $this->intent = $intent;
-
-        return $this;
     }
 
     public function getBadgeAddNum(): ?int
@@ -164,11 +165,9 @@ class HmosNotification implements Arrayable
         return $this->badgeAddNum;
     }
 
-    public function setBadgeAddNum(?int $badgeAddNum): static
+    public function setBadgeAddNum(?int $badgeAddNum): void
     {
         $this->badgeAddNum = $badgeAddNum;
-
-        return $this;
     }
 
     public function getBadgeSetNum(): ?int
@@ -176,11 +175,9 @@ class HmosNotification implements Arrayable
         return $this->badgeSetNum;
     }
 
-    public function setBadgeSetNum(?int $badgeSetNum): static
+    public function setBadgeSetNum(?int $badgeSetNum): void
     {
         $this->badgeSetNum = $badgeSetNum;
-
-        return $this;
     }
 
     public function isTestMessage(): ?bool
@@ -188,11 +185,9 @@ class HmosNotification implements Arrayable
         return $this->testMessage;
     }
 
-    public function setTestMessage(?bool $testMessage): static
+    public function setTestMessage(?bool $testMessage): void
     {
         $this->testMessage = $testMessage;
-
-        return $this;
     }
 
     public function getReceiptId(): ?string
@@ -200,23 +195,25 @@ class HmosNotification implements Arrayable
         return $this->receiptId;
     }
 
-    public function setReceiptId(?string $receiptId): static
+    public function setReceiptId(?string $receiptId): void
     {
         $this->receiptId = $receiptId;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getExtras(): ?array
     {
         return $this->extras;
     }
 
-    public function setExtras(?array $extras): static
+    /**
+     * @param array<string, mixed>|null $extras
+     */
+    public function setExtras(?array $extras): void
     {
         $this->extras = $extras;
-
-        return $this;
     }
 
     public function getStyle(): ?int
@@ -224,23 +221,25 @@ class HmosNotification implements Arrayable
         return $this->style;
     }
 
-    public function setStyle(?int $style): static
+    public function setStyle(?int $style): void
     {
         $this->style = $style;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getInbox(): ?array
     {
         return $this->inbox;
     }
 
-    public function setInbox(?array $inbox): static
+    /**
+     * @param array<string, mixed>|null $inbox
+     */
+    public function setInbox(?array $inbox): void
     {
         $this->inbox = $inbox;
-
-        return $this;
     }
 
     public function getPushType(): ?string
@@ -248,25 +247,30 @@ class HmosNotification implements Arrayable
         return $this->pushType;
     }
 
-    public function setPushType(?string $pushType): static
+    public function setPushType(?string $pushType): void
     {
         $this->pushType = $pushType;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getExtraData(): ?array
     {
         return $this->extraData;
     }
 
-    public function setExtraData(?array $extraData): static
+    /**
+     * @param array<string, mixed>|null $extraData
+     */
+    public function setExtraData(?array $extraData): void
     {
         $this->extraData = $extraData;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -284,6 +288,6 @@ class HmosNotification implements Arrayable
             'inbox' => $this->getInbox(),
             'push_type' => $this->getPushType(),
             'extra_data' => $this->getExtraData(),
-        ]);
+        ], fn ($value) => null !== $value);
     }
 }

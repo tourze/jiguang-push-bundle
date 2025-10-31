@@ -13,15 +13,24 @@ class LiveActivity
     #[ORM\Column(length: 100, nullable: true, options: ['comment' => '推送令牌'])]
     private ?string $pushToken = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '事件状态'])]
     private ?array $event = null;
 
     #[ORM\Column(nullable: true, options: ['comment' => '过期时间戳'])]
     private ?int $timestamp = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '活动内容'])]
     private ?array $contentState = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '推送配置'])]
     private ?array $staleDate = null;
 
@@ -33,11 +42,9 @@ class LiveActivity
         return $this->activityId;
     }
 
-    public function setActivityId(?string $activityId): static
+    public function setActivityId(?string $activityId): void
     {
         $this->activityId = $activityId;
-
-        return $this;
     }
 
     public function getPushToken(): ?string
@@ -45,23 +52,25 @@ class LiveActivity
         return $this->pushToken;
     }
 
-    public function setPushToken(?string $pushToken): static
+    public function setPushToken(?string $pushToken): void
     {
         $this->pushToken = $pushToken;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getEvent(): ?array
     {
         return $this->event;
     }
 
-    public function setEvent(?array $event): static
+    /**
+     * @param array<string, mixed>|null $event
+     */
+    public function setEvent(?array $event): void
     {
         $this->event = $event;
-
-        return $this;
     }
 
     public function getTimestamp(): ?int
@@ -69,35 +78,41 @@ class LiveActivity
         return $this->timestamp;
     }
 
-    public function setTimestamp(?int $timestamp): static
+    public function setTimestamp(?int $timestamp): void
     {
         $this->timestamp = $timestamp;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getContentState(): ?array
     {
         return $this->contentState;
     }
 
-    public function setContentState(?array $contentState): static
+    /**
+     * @param array<string, mixed>|null $contentState
+     */
+    public function setContentState(?array $contentState): void
     {
         $this->contentState = $contentState;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getStaleDate(): ?array
     {
         return $this->staleDate;
     }
 
-    public function setStaleDate(?array $staleDate): static
+    /**
+     * @param array<string, mixed>|null $staleDate
+     */
+    public function setStaleDate(?array $staleDate): void
     {
         $this->staleDate = $staleDate;
-
-        return $this;
     }
 
     public function getRelevanceScore(): ?int
@@ -105,10 +120,8 @@ class LiveActivity
         return $this->relevanceScore;
     }
 
-    public function setRelevanceScore(?int $relevanceScore): static
+    public function setRelevanceScore(?int $relevanceScore): void
     {
         $this->relevanceScore = $relevanceScore;
-
-        return $this;
     }
 }

@@ -11,51 +11,63 @@ use JiguangPushBundle\Entity\Embedded\Notification;
 use JiguangPushBundle\Entity\Embedded\Options;
 use JiguangPushBundle\Enum\PlatformEnum;
 use JiguangPushBundle\Repository\PushRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\Arrayable\Arrayable;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 
 /**
  * @see https://docs.jiguang.cn/jpush/server/push/rest_api_v3_push
+ * @implements Arrayable<string, mixed>
  */
 #[ORM\Entity(repositoryClass: PushRepository::class)]
 #[ORM\Table(name: 'ims_jiguang_push_request', options: ['comment' => '推送消息'])]
 class Push implements Arrayable, \Stringable
 {
     use TimestampableAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    private int $id = 0;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private Account $account;
 
+    #[Assert\NotNull]
+    #[Assert\Choice(callback: [PlatformEnum::class, 'cases'])]
     #[ORM\Column(type: Types::STRING, enumType: PlatformEnum::class, options: ['comment' => '推送平台'])]
     private PlatformEnum $platform;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: Audience::class)]
     private Audience $audience;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: Notification::class)]
     private ?Notification $notification = null;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: Message::class)]
     private ?Message $message = null;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: Options::class)]
     private ?Options $options = null;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: Callback::class)]
     private ?Callback $callback = null;
 
+    #[Assert\Length(max: 100)]
     #[ORM\Column(length: 100, nullable: true, options: ['comment' => '推送ID'])]
     private ?string $cid = null;
 
+    #[Assert\Length(max: 100)]
     #[ORM\Column(length: 100, nullable: true, options: ['comment' => '消息ID，发送成功后返回'])]
     private ?string $msgId = null;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -65,11 +77,9 @@ class Push implements Arrayable, \Stringable
         return $this->account;
     }
 
-    public function setAccount(Account $account): static
+    public function setAccount(Account $account): void
     {
         $this->account = $account;
-
-        return $this;
     }
 
     public function getPlatform(): PlatformEnum
@@ -77,11 +87,9 @@ class Push implements Arrayable, \Stringable
         return $this->platform;
     }
 
-    public function setPlatform(PlatformEnum $platform): static
+    public function setPlatform(PlatformEnum $platform): void
     {
         $this->platform = $platform;
-
-        return $this;
     }
 
     public function getAudience(): Audience
@@ -89,11 +97,9 @@ class Push implements Arrayable, \Stringable
         return $this->audience;
     }
 
-    public function setAudience(Audience $audience): static
+    public function setAudience(Audience $audience): void
     {
         $this->audience = $audience;
-
-        return $this;
     }
 
     public function getNotification(): ?Notification
@@ -101,11 +107,9 @@ class Push implements Arrayable, \Stringable
         return $this->notification;
     }
 
-    public function setNotification(?Notification $notification): static
+    public function setNotification(?Notification $notification): void
     {
         $this->notification = $notification;
-
-        return $this;
     }
 
     public function getMessage(): ?Message
@@ -113,11 +117,9 @@ class Push implements Arrayable, \Stringable
         return $this->message;
     }
 
-    public function setMessage(?Message $message): static
+    public function setMessage(?Message $message): void
     {
         $this->message = $message;
-
-        return $this;
     }
 
     public function getOptions(): ?Options
@@ -125,11 +127,9 @@ class Push implements Arrayable, \Stringable
         return $this->options;
     }
 
-    public function setOptions(?Options $options): static
+    public function setOptions(?Options $options): void
     {
         $this->options = $options;
-
-        return $this;
     }
 
     public function getCallback(): ?Callback
@@ -137,11 +137,9 @@ class Push implements Arrayable, \Stringable
         return $this->callback;
     }
 
-    public function setCallback(?Callback $callback): static
+    public function setCallback(?Callback $callback): void
     {
         $this->callback = $callback;
-
-        return $this;
     }
 
     public function getCid(): ?string
@@ -149,11 +147,9 @@ class Push implements Arrayable, \Stringable
         return $this->cid;
     }
 
-    public function setCid(?string $cid): static
+    public function setCid(?string $cid): void
     {
         $this->cid = $cid;
-
-        return $this;
     }
 
     public function getMsgId(): ?string
@@ -161,15 +157,14 @@ class Push implements Arrayable, \Stringable
         return $this->msgId;
     }
 
-    public function setMsgId(?string $msgId): static
+    public function setMsgId(?string $msgId): void
     {
         $this->msgId = $msgId;
-
-        return $this;
     }
 
     /**
      * 转换为极光推送API请求数据结构
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -178,23 +173,23 @@ class Push implements Arrayable, \Stringable
             'audience' => $this->getAudience()->toData(),
         ];
 
-        if ($this->getNotification() !== null) {
+        if (null !== $this->getNotification()) {
             $data['notification'] = $this->getNotification()->toArray();
         }
 
-        if ($this->getMessage() !== null) {
+        if (null !== $this->getMessage()) {
             $data['message'] = $this->getMessage()->toArray();
         }
 
-        if ($this->getOptions() !== null) {
+        if (null !== $this->getOptions()) {
             $data['options'] = $this->getOptions()->toArray();
         }
 
-        if ($this->getCallback() !== null) {
+        if (null !== $this->getCallback()) {
             $data['callback'] = $this->getCallback()->toArray();
         }
 
-        if ($this->getCid() !== null) {
+        if (null !== $this->getCid()) {
             $data['cid'] = $this->getCid();
         }
 
@@ -202,10 +197,11 @@ class Push implements Arrayable, \Stringable
         //     $data['msgId'] = $this->getMsgId();
         // }
 
-        return array_filter($data);
+        return array_filter($data, fn ($value) => '' !== $value && [] !== $value);
     }
 
     public function __toString(): string
     {
         return 'Push #' . $this->id . ' - ' . $this->platform->value;
-    }}
+    }
+}

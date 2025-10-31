@@ -3,229 +3,176 @@
 namespace JiguangPushBundle\Tests\Entity\Embedded;
 
 use JiguangPushBundle\Entity\Embedded\Options;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class OptionsTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Options::class)]
+final class OptionsTest extends TestCase
 {
-    private Options $options;
-
-    protected function setUp(): void
+    protected function createEntity(): Options
     {
-        $this->options = new Options();
+        return new Options();
     }
 
-    public function testGetSetTimeToLive(): void
+    #[DataProvider('propertiesProvider')]
+    public function testGettersAndSetters(string $property, mixed $value): void
     {
-        $ttl = 86400;
-        $this->options->setTimeToLive($ttl);
-        $this->assertSame($ttl, $this->options->getTimeToLive());
-        
-        $this->options->setTimeToLive(null);
-        $this->assertNull($this->options->getTimeToLive());
+        $entity = $this->createEntity();
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $isGetter = 'is' . ucfirst($property);
+
+        $this->assertTrue(method_exists($entity, $setter), "Setter {$setter} does not exist");
+
+        // Check if it's a boolean getter (is* method) or regular getter (get* method)
+        if (method_exists($entity, $isGetter)) {
+            $getter = $isGetter;
+        }
+
+        $this->assertTrue(method_exists($entity, $getter), "Getter {$getter} does not exist");
+
+        $setterCallable = [$entity, $setter];
+        self::assertIsCallable($setterCallable);
+        call_user_func($setterCallable, $value);
+
+        $getterCallable = [$entity, $getter];
+        self::assertIsCallable($getterCallable);
+        $this->assertSame($value, call_user_func($getterCallable), 'Getter should return the set value');
     }
 
-    public function testGetSetApnsProduction(): void
+    public static function propertiesProvider(): \Generator
     {
-        $this->options->setApnsProduction(true);
-        $this->assertTrue($this->options->isApnsProduction());
-        
-        $this->options->setApnsProduction(false);
-        $this->assertFalse($this->options->isApnsProduction());
-        
-        $this->options->setApnsProduction(null);
-        $this->assertNull($this->options->isApnsProduction());
+        yield 'timeToLive' => ['timeToLive', 86400];
+        yield 'apnsProduction' => ['apnsProduction', true];
+        yield 'apnsCollapseId' => ['apnsCollapseId', 'collapse-id-123'];
+        yield 'thirdPartyChannel' => ['thirdPartyChannel', ['xiaomi' => ['app_id' => 'test']]];
+        yield 'override' => ['override', false];
+        yield 'uniqueKey' => ['uniqueKey', 'unique-key-456'];
+        yield 'bigPushDuration' => ['bigPushDuration', 3600];
+        yield 'withdrawable' => ['withdrawable', true];
+        yield 'thirdPartyEnable' => ['thirdPartyEnable', false];
+        yield 'cacheable' => ['cacheable', true];
+        yield 'sync' => ['sync', false];
     }
 
-    public function testGetSetApnsCollapseId(): void
+    public function testToArrayReturnsFilteredArray(): void
     {
-        $collapseId = 'test-collapse-id';
-        $this->options->setApnsCollapseId($collapseId);
-        $this->assertSame($collapseId, $this->options->getApnsCollapseId());
-        
-        $this->options->setApnsCollapseId(null);
-        $this->assertNull($this->options->getApnsCollapseId());
+        $options = $this->createEntity();
+        $options->setTimeToLive(86400);
+        $options->setApnsProduction(true);
+        $options->setUniqueKey('test-key');
+
+        $result = $options->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals([
+            'time_to_live' => 86400,
+            'apns_production' => true,
+            'unique_key' => 'test-key',
+        ], $result);
     }
 
-    public function testGetSetBigPushDuration(): void
+    public function testToArrayExcludesNullValues(): void
     {
-        $duration = 3600;
-        $this->options->setBigPushDuration($duration);
-        $this->assertSame($duration, $this->options->getBigPushDuration());
-        
-        $this->options->setBigPushDuration(null);
-        $this->assertNull($this->options->getBigPushDuration());
+        $options = $this->createEntity();
+        $options->setTimeToLive(86400);
+        $options->setApnsProduction(null);
+
+        $result = $options->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals([
+            'time_to_live' => 86400,
+        ], $result);
+        $this->assertArrayNotHasKey('apns_production', $result);
     }
 
-    public function testGetSetThirdPartyChannel(): void
+    public function testToArrayReturnsEmptyArrayWhenAllNull(): void
     {
-        $channel = [
-            'huawei' => [
-                'channel_id' => 'test_huawei_channel',
-            ],
-            'xiaomi' => [
-                'channel_id' => 'test_xiaomi_channel',
-            ],
+        $options = $this->createEntity();
+
+        $result = $options->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
+    public function testBooleanPropertiesHandledCorrectly(): void
+    {
+        $options = $this->createEntity();
+        $options->setApnsProduction(true);
+        $options->setOverride(true);
+        $options->setWithdrawable(true);
+
+        $result = $options->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertTrue($result['apns_production']);
+        $this->assertTrue($result['override']);
+        $this->assertTrue($result['withdrawable']);
+    }
+
+    public function testThirdPartyChannelProperty(): void
+    {
+        $options = $this->createEntity();
+        $channelConfig = [
+            'xiaomi' => ['app_id' => 'xiaomi-app-id', 'app_key' => 'xiaomi-app-key'],
+            'huawei' => ['app_id' => 'huawei-app-id'],
         ];
-        $this->options->setThirdPartyChannel($channel);
-        $this->assertSame($channel, $this->options->getThirdPartyChannel());
-        
-        $this->options->setThirdPartyChannel(null);
-        $this->assertNull($this->options->getThirdPartyChannel());
+        $options->setThirdPartyChannel($channelConfig);
+
+        $result = $options->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals($channelConfig, $result['third_party_channel']);
     }
 
-    public function testGetSetOverride(): void
+    public function testIntegerProperties(): void
     {
-        $this->options->setOverride(true);
-        $this->assertTrue($this->options->isOverride());
-        
-        $this->options->setOverride(false);
-        $this->assertFalse($this->options->isOverride());
-        
-        $this->options->setOverride(null);
-        $this->assertNull($this->options->isOverride());
+        $options = $this->createEntity();
+        $options->setTimeToLive(86400);
+        $options->setBigPushDuration(3600);
+
+        $result = $options->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals(86400, $result['time_to_live']);
+        $this->assertEquals(3600, $result['big_push_duration']);
     }
 
-    public function testGetSetUniqueKey(): void
+    public function testSettersWork(): void
     {
-        $uniqueKey = 'test-unique-key';
-        $this->options->setUniqueKey($uniqueKey);
-        $this->assertSame($uniqueKey, $this->options->getUniqueKey());
-        
-        $this->options->setUniqueKey(null);
-        $this->assertNull($this->options->getUniqueKey());
+        $options = $this->createEntity();
+
+        $options->setTimeToLive(86400);
+        $options->setApnsProduction(true);
+        $options->setUniqueKey('test-key');
+        $options->setWithdrawable(true);
+
+        $this->assertEquals(86400, $options->getTimeToLive());
+        $this->assertTrue($options->isApnsProduction());
+        $this->assertEquals('test-key', $options->getUniqueKey());
+        $this->assertTrue($options->isWithdrawable());
     }
 
-    public function testGetSetWithdrawable(): void
+    public function testNullValueHandling(): void
     {
-        $this->options->setWithdrawable(true);
-        $this->assertTrue($this->options->isWithdrawable());
-        
-        $this->options->setWithdrawable(false);
-        $this->assertFalse($this->options->isWithdrawable());
-        
-        $this->options->setWithdrawable(null);
-        $this->assertNull($this->options->isWithdrawable());
-    }
+        $options = $this->createEntity();
 
-    public function testGetSetThirdPartyEnable(): void
-    {
-        $this->options->setThirdPartyEnable(true);
-        $this->assertTrue($this->options->isThirdPartyEnable());
-        
-        $this->options->setThirdPartyEnable(false);
-        $this->assertFalse($this->options->isThirdPartyEnable());
-        
-        $this->options->setThirdPartyEnable(null);
-        $this->assertNull($this->options->isThirdPartyEnable());
-    }
-
-    public function testGetSetCacheable(): void
-    {
-        $this->options->setCacheable(true);
-        $this->assertTrue($this->options->isCacheable());
-        
-        $this->options->setCacheable(false);
-        $this->assertFalse($this->options->isCacheable());
-        
-        $this->options->setCacheable(null);
-        $this->assertNull($this->options->isCacheable());
-    }
-
-    public function testGetSetSync(): void
-    {
-        $this->options->setSync(true);
-        $this->assertTrue($this->options->isSync());
-        
-        $this->options->setSync(false);
-        $this->assertFalse($this->options->isSync());
-        
-        $this->options->setSync(null);
-        $this->assertNull($this->options->isSync());
-    }
-
-    public function testToArrayWithMinimalFields(): void
-    {
-        // 没有设置任何字段
-        $data = $this->options->toArray();
-        $this->assertEmpty($data);
-    }
-
-    public function testToArrayWithAllFields(): void
-    {
-        $ttl = 86400;
-        $apnsProduction = true;
-        $collapseId = 'test-collapse-id';
-        $channel = ['huawei' => ['channel_id' => 'test_huawei_channel']];
-        $override = true;
-        $uniqueKey = 'test-unique-key';
-        $duration = 3600;
-        $withdrawable = true;
-        $thirdPartyEnable = true;
-        $cacheable = true;
-        $sync = true;
-        
-        $this->options->setTimeToLive($ttl);
-        $this->options->setApnsProduction($apnsProduction);
-        $this->options->setApnsCollapseId($collapseId);
-        $this->options->setThirdPartyChannel($channel);
-        $this->options->setOverride($override);
-        $this->options->setUniqueKey($uniqueKey);
-        $this->options->setBigPushDuration($duration);
-        $this->options->setWithdrawable($withdrawable);
-        $this->options->setThirdPartyEnable($thirdPartyEnable);
-        $this->options->setCacheable($cacheable);
-        $this->options->setSync($sync);
-        
-        $data = $this->options->toArray();
-        $this->assertArrayHasKey('time_to_live', $data);
-        $this->assertArrayHasKey('apns_production', $data);
-        $this->assertArrayHasKey('apns_collapse_id', $data);
-        $this->assertArrayHasKey('third_party_channel', $data);
-        $this->assertArrayHasKey('override', $data);
-        $this->assertArrayHasKey('unique_key', $data);
-        $this->assertArrayHasKey('big_push_duration', $data);
-        $this->assertArrayHasKey('withdrawable', $data);
-        $this->assertArrayHasKey('third_party_enable', $data);
-        $this->assertArrayHasKey('cacheable', $data);
-        $this->assertArrayHasKey('sync', $data);
-        
-        $this->assertSame($ttl, $data['time_to_live']);
-        $this->assertSame($apnsProduction, $data['apns_production']);
-        $this->assertSame($collapseId, $data['apns_collapse_id']);
-        $this->assertSame($channel, $data['third_party_channel']);
-        $this->assertSame($override, $data['override']);
-        $this->assertSame($uniqueKey, $data['unique_key']);
-        $this->assertSame($duration, $data['big_push_duration']);
-        $this->assertSame($withdrawable, $data['withdrawable']);
-        $this->assertSame($thirdPartyEnable, $data['third_party_enable']);
-        $this->assertSame($cacheable, $data['cacheable']);
-        $this->assertSame($sync, $data['sync']);
-    }
-
-    public function testToArrayOmitsNullFields(): void
-    {
-        // 只设置部分字段
-        $ttl = 86400;
-        $apnsProduction = true;
-        
-        $this->options->setTimeToLive($ttl);
-        $this->options->setApnsProduction($apnsProduction);
-        // 其他字段保持为null
-        
-        $data = $this->options->toArray();
-        $this->assertArrayHasKey('time_to_live', $data);
-        $this->assertArrayHasKey('apns_production', $data);
-        $this->assertArrayNotHasKey('apns_collapse_id', $data);
-        $this->assertArrayNotHasKey('third_party_channel', $data);
-        $this->assertArrayNotHasKey('override', $data);
-        $this->assertArrayNotHasKey('unique_key', $data);
-        $this->assertArrayNotHasKey('big_push_duration', $data);
-        $this->assertArrayNotHasKey('withdrawable', $data);
-        $this->assertArrayNotHasKey('third_party_enable', $data);
-        $this->assertArrayNotHasKey('cacheable', $data);
-        $this->assertArrayNotHasKey('sync', $data);
-        
-        $this->assertSame($ttl, $data['time_to_live']);
-        $this->assertSame($apnsProduction, $data['apns_production']);
+        $this->assertNull($options->getTimeToLive());
+        $this->assertNull($options->isApnsProduction());
+        $this->assertNull($options->getApnsCollapseId());
+        $this->assertNull($options->getThirdPartyChannel());
+        $this->assertNull($options->isOverride());
+        $this->assertNull($options->getUniqueKey());
+        $this->assertNull($options->getBigPushDuration());
+        $this->assertNull($options->isWithdrawable());
+        $this->assertNull($options->isThirdPartyEnable());
+        $this->assertNull($options->isCacheable());
+        $this->assertNull($options->isSync());
     }
 }

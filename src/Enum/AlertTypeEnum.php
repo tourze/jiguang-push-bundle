@@ -69,7 +69,7 @@ enum AlertTypeEnum: int implements Itemable, Labelable, Selectable
 
     public function getLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DEFAULT_ALL => '跟随系统默认',
             self::NONE => '无提醒',
             self::SOUND => '声音提醒',

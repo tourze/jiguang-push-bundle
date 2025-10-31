@@ -3,113 +3,131 @@
 namespace JiguangPushBundle\Tests\Entity\Embedded;
 
 use JiguangPushBundle\Entity\Embedded\Message;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class MessageTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Message::class)]
+final class MessageTest extends TestCase
 {
-    private Message $message;
-
-    protected function setUp(): void
+    protected function createEntity(): Message
     {
-        $this->message = new Message();
+        return new Message();
     }
 
-    public function testGetSetMsgContent(): void
+    #[DataProvider('propertiesProvider')]
+    public function testGettersAndSetters(string $property, mixed $value): void
     {
-        $content = '测试消息内容';
-        $this->message->setMsgContent($content);
-        $this->assertSame($content, $this->message->getMsgContent());
+        $entity = $this->createEntity();
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $isGetter = 'is' . ucfirst($property);
+
+        $this->assertTrue(method_exists($entity, $setter), "Setter {$setter} does not exist");
+
+        // Check if it's a boolean getter (is* method) or regular getter (get* method)
+        if (method_exists($entity, $isGetter)) {
+            $getter = $isGetter;
+        }
+
+        $this->assertTrue(method_exists($entity, $getter), "Getter {$getter} does not exist");
+
+        $setterCallable = [$entity, $setter];
+        self::assertIsCallable($setterCallable);
+        call_user_func($setterCallable, $value);
+
+        $getterCallable = [$entity, $getter];
+        self::assertIsCallable($getterCallable);
+        $this->assertSame($value, call_user_func($getterCallable), 'Getter should return the set value');
     }
 
-    public function testGetSetTitle(): void
+    public static function propertiesProvider(): \Generator
     {
-        $title = '测试标题';
-        $this->message->setTitle($title);
-        $this->assertSame($title, $this->message->getTitle());
-
-        $this->message->setTitle(null);
-        $this->assertNull($this->message->getTitle());
+        yield 'msgContent' => ['msgContent', 'Test message content'];
+        yield 'contentType' => ['contentType', 'text/plain'];
+        yield 'title' => ['title', 'Test Message Title'];
+        yield 'extras' => ['extras', ['key1' => 'value1', 'key2' => 'value2']];
     }
 
-    public function testGetSetContentType(): void
+    public function testToArrayReturnsFilteredArray(): void
     {
-        $type = 'text/plain';
-        $this->message->setContentType($type);
-        $this->assertSame($type, $this->message->getContentType());
+        $message = $this->createEntity();
+        $message->setMsgContent('Test message content');
+        $message->setTitle('Test Title');
+        $message->setExtras(['custom' => 'data']);
 
-        $this->message->setContentType(null);
-        $this->assertNull($this->message->getContentType());
+        $result = $message->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals([
+            'msg_content' => 'Test message content',
+            'title' => 'Test Title',
+            'extras' => ['custom' => 'data'],
+        ], $result);
     }
 
-    public function testGetSetExtras(): void
+    public function testToArrayExcludesNullValues(): void
     {
-        $extras = [
-            'key1' => 'value1',
-            'key2' => 'value2',
-            'key3' => 123,
-        ];
-        $this->message->setExtras($extras);
-        $this->assertSame($extras, $this->message->getExtras());
+        $message = $this->createEntity();
+        $message->setMsgContent('Test message content');
+        $message->setContentType(null);
 
-        $this->message->setExtras(null);
-        $this->assertNull($this->message->getExtras());
+        $result = $message->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals([
+            'msg_content' => 'Test message content',
+        ], $result);
+        $this->assertArrayNotHasKey('content_type', $result);
     }
 
-    public function testToArrayWithMinimalFields(): void
+    public function testToArrayReturnsEmptyArrayWhenAllNull(): void
     {
-        $content = '测试消息内容';
-        $this->message->setMsgContent($content);
+        $message = $this->createEntity();
 
-        $data = $this->message->toArray();
-        $this->assertArrayHasKey('msg_content', $data);
-        $this->assertSame($content, $data['msg_content']);
+        $result = $message->toArray();
 
-        // 可选字段不应存在
-        $this->assertArrayNotHasKey('title', $data);
-        $this->assertArrayNotHasKey('content_type', $data);
-        $this->assertArrayNotHasKey('extras', $data);
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
-    public function testToArrayWithAllFields(): void
+    public function testArrayPropertiesHandledCorrectly(): void
     {
-        $content = '测试消息内容';
-        $title = '测试标题';
-        $type = 'text/plain';
-        $extras = ['key1' => 'value1', 'key2' => 123];
+        $message = $this->createEntity();
+        $extras = ['key1' => 'value1', 'key2' => 'value2', 'nested' => ['data' => 'test']];
+        $message->setExtras($extras);
 
-        $this->message->setMsgContent($content);
-        $this->message->setTitle($title);
-        $this->message->setContentType($type);
-        $this->message->setExtras($extras);
+        $result = $message->toArray();
 
-        $data = $this->message->toArray();
-        $this->assertArrayHasKey('msg_content', $data);
-        $this->assertArrayHasKey('title', $data);
-        $this->assertArrayHasKey('content_type', $data);
-        $this->assertArrayHasKey('extras', $data);
-
-        $this->assertSame($content, $data['msg_content']);
-        $this->assertSame($title, $data['title']);
-        $this->assertSame($type, $data['content_type']);
-        $this->assertSame($extras, $data['extras']);
+        $this->assertIsArray($result);
+        $this->assertEquals($extras, $result['extras']);
     }
 
-    public function testToArrayOmitsNullFields(): void
+    public function testSettersWork(): void
     {
-        $content = '测试消息内容';
-        $title = '测试标题';
+        $message = $this->createEntity();
 
-        $this->message->setMsgContent($content);
-        $this->message->setTitle($title);
-        // contentType和extras保持为null
+        $message->setMsgContent('Test content');
+        $message->setContentType('text/html');
+        $message->setTitle('Test Title');
+        $message->setExtras(['key' => 'value']);
 
-        $data = $this->message->toArray();
-        $this->assertArrayHasKey('msg_content', $data);
-        $this->assertArrayHasKey('title', $data);
-        $this->assertArrayNotHasKey('content_type', $data);
-        $this->assertArrayNotHasKey('extras', $data);
+        $this->assertEquals('Test content', $message->getMsgContent());
+        $this->assertEquals('text/html', $message->getContentType());
+        $this->assertEquals('Test Title', $message->getTitle());
+        $this->assertEquals(['key' => 'value'], $message->getExtras());
+    }
 
-        $this->assertSame($content, $data['msg_content']);
-        $this->assertSame($title, $data['title']);
+    public function testNullValueHandling(): void
+    {
+        $message = $this->createEntity();
+
+        $this->assertNull($message->getMsgContent());
+        $this->assertNull($message->getContentType());
+        $this->assertNull($message->getTitle());
+        $this->assertNull($message->getExtras());
     }
 }

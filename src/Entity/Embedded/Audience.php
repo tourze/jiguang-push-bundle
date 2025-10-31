@@ -7,6 +7,7 @@ use Tourze\Arrayable\Arrayable;
 
 /**
  * 推送目标
+ * @implements Arrayable<string, mixed>
  */
 #[ORM\Embeddable]
 class Audience implements Arrayable
@@ -14,24 +15,45 @@ class Audience implements Arrayable
     #[ORM\Column(type: 'boolean', options: ['comment' => '是否推送给所有用户'])]
     private bool $all = false;
 
+    /**
+     * @var array<string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '标签'])]
     private ?array $tag = null;
 
+    /**
+     * @var array<string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '标签AND'])]
     private ?array $tagAnd = null;
 
+    /**
+     * @var array<string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '标签NOT'])]
     private ?array $tagNot = null;
 
+    /**
+     * @var array<string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '别名'])]
     private ?array $alias = null;
 
+    /**
+     * @var array<string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '注册ID'])]
     private ?array $registrationId = null;
 
+    /**
+     * @var array<string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '用户分群 ID'])]
     private ?array $segment = null;
 
+    /**
+     * @var array<string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => 'A/B Test ID'])]
     private ?array $abTest = null;
 
@@ -40,97 +62,126 @@ class Audience implements Arrayable
         return $this->all;
     }
 
-    public function setAll(bool $all): static
+    public function setAll(bool $all): void
     {
         $this->all = $all;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getTag(): ?array
     {
         return $this->tag;
     }
 
-    public function setTag(?array $tag): static
+    /**
+     * @param array<string>|null $tag
+     */
+    public function setTag(?array $tag): void
     {
         $this->tag = $tag;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getTagAnd(): ?array
     {
         return $this->tagAnd;
     }
 
-    public function setTagAnd(?array $tagAnd): static
+    /**
+     * @param array<string>|null $tagAnd
+     */
+    public function setTagAnd(?array $tagAnd): void
     {
         $this->tagAnd = $tagAnd;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getTagNot(): ?array
     {
         return $this->tagNot;
     }
 
-    public function setTagNot(?array $tagNot): static
+    /**
+     * @param array<string>|null $tagNot
+     */
+    public function setTagNot(?array $tagNot): void
     {
         $this->tagNot = $tagNot;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getAlias(): ?array
     {
         return $this->alias;
     }
 
-    public function setAlias(?array $alias): static
+    /**
+     * @param array<string>|null $alias
+     */
+    public function setAlias(?array $alias): void
     {
         $this->alias = $alias;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getRegistrationId(): ?array
     {
         return $this->registrationId;
     }
 
-    public function setRegistrationId(?array $registrationId): static
+    /**
+     * @param array<string>|null $registrationId
+     */
+    public function setRegistrationId(?array $registrationId): void
     {
         $this->registrationId = $registrationId;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getSegment(): ?array
     {
         return $this->segment;
     }
 
-    public function setSegment(?array $segment): static
+    /**
+     * @param array<string>|null $segment
+     */
+    public function setSegment(?array $segment): void
     {
         $this->segment = $segment;
-
-        return $this;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getAbTest(): ?array
     {
         return $this->abTest;
     }
 
-    public function setAbTest(?array $abTest): static
+    /**
+     * @param array<string>|null $abTest
+     */
+    public function setAbTest(?array $abTest): void
     {
         $this->abTest = $abTest;
-
-        return $this;
     }
 
+    /**
+     * @return string|array<string, mixed>
+     */
     public function toData(): string|array
     {
         if ($this->isAll()) {
@@ -145,9 +196,12 @@ class Audience implements Arrayable
             'registration_id' => $this->getRegistrationId(),
             'segment' => $this->getSegment(),
             'abtest' => $this->getAbTest(),
-        ]);
+        ], fn ($value) => null !== $value);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return is_array($this->toData()) ? $this->toData() : ['all' => true];

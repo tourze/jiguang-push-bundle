@@ -5,6 +5,9 @@ namespace JiguangPushBundle\Entity\Embedded;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\Arrayable\Arrayable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 #[ORM\Embeddable]
 class Notification implements Arrayable
 {
@@ -31,11 +34,9 @@ class Notification implements Arrayable
         return $this->alert;
     }
 
-    public function setAlert(?string $alert): static
+    public function setAlert(?string $alert): void
     {
         $this->alert = $alert;
-
-        return $this;
     }
 
     public function getAndroid(): ?AndroidNotification
@@ -43,11 +44,9 @@ class Notification implements Arrayable
         return $this->android;
     }
 
-    public function setAndroid(?AndroidNotification $android): static
+    public function setAndroid(?AndroidNotification $android): void
     {
         $this->android = $android;
-
-        return $this;
     }
 
     public function getIos(): ?IosNotification
@@ -55,11 +54,9 @@ class Notification implements Arrayable
         return $this->ios;
     }
 
-    public function setIos(?IosNotification $ios): static
+    public function setIos(?IosNotification $ios): void
     {
         $this->ios = $ios;
-
-        return $this;
     }
 
     public function getHmos(): ?HmosNotification
@@ -67,11 +64,9 @@ class Notification implements Arrayable
         return $this->hmos;
     }
 
-    public function setHmos(?HmosNotification $hmos): static
+    public function setHmos(?HmosNotification $hmos): void
     {
         $this->hmos = $hmos;
-
-        return $this;
     }
 
     public function getQuickapp(): ?QuickAppNotification
@@ -79,11 +74,9 @@ class Notification implements Arrayable
         return $this->quickapp;
     }
 
-    public function setQuickapp(?QuickAppNotification $quickapp): static
+    public function setQuickapp(?QuickAppNotification $quickapp): void
     {
         $this->quickapp = $quickapp;
-
-        return $this;
     }
 
     public function getVoip(): ?VoipNotification
@@ -91,38 +84,39 @@ class Notification implements Arrayable
         return $this->voip;
     }
 
-    public function setVoip(?VoipNotification $voip): static
+    public function setVoip(?VoipNotification $voip): void
     {
         $this->voip = $voip;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         $data = [];
 
-        if ($this->alert !== null) {
+        if (null !== $this->alert) {
             $data['alert'] = $this->alert;
         }
 
-        if ($this->android !== null) {
+        if (null !== $this->android) {
             $data['android'] = $this->android->toArray();
         }
 
-        if ($this->ios !== null) {
+        if (null !== $this->ios) {
             $data['ios'] = $this->ios->toArray();
         }
 
-        if ($this->hmos !== null) {
+        if (null !== $this->hmos) {
             $data['hmos'] = $this->hmos->toArray();
         }
 
-        if ($this->quickapp !== null) {
+        if (null !== $this->quickapp) {
             $data['quickapp'] = $this->quickapp->toArray();
         }
 
-        if ($this->voip !== null) {
+        if (null !== $this->voip) {
             $data['voip'] = $this->voip->toArray();
         }
 

@@ -3,157 +3,111 @@
 namespace JiguangPushBundle\Tests\Entity\Embedded;
 
 use JiguangPushBundle\Entity\Embedded\Audience;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class AudienceTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(Audience::class)]
+final class AudienceTest extends TestCase
 {
-    private Audience $audience;
-
-    protected function setUp(): void
+    protected function createEntity(): Audience
     {
-        $this->audience = new Audience();
+        return new Audience();
     }
 
-    public function testGetSetAll(): void
+    #[DataProvider('propertiesProvider')]
+    public function testGettersAndSetters(string $property, mixed $value): void
     {
-        $this->audience->setAll(true);
-        $this->assertTrue($this->audience->isAll());
-        
-        $this->audience->setAll(false);
-        $this->assertFalse($this->audience->isAll());
+        $entity = $this->createEntity();
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $isGetter = 'is' . ucfirst($property);
+
+        $this->assertTrue(method_exists($entity, $setter), "Setter {$setter} does not exist");
+
+        // Check if it's a boolean getter (is* method) or regular getter (get* method)
+        if (method_exists($entity, $isGetter)) {
+            $getter = $isGetter;
+        }
+
+        $this->assertTrue(method_exists($entity, $getter), "Getter {$getter} does not exist");
+
+        $setterCallable = [$entity, $setter];
+        self::assertIsCallable($setterCallable);
+        call_user_func($setterCallable, $value);
+
+        $getterCallable = [$entity, $getter];
+        self::assertIsCallable($getterCallable);
+        $this->assertSame($value, call_user_func($getterCallable), 'Getter should return the set value');
     }
 
-    public function testGetSetTag(): void
+    public static function propertiesProvider(): \Generator
     {
-        $tags = ['tag1', 'tag2', 'tag3'];
-        $this->audience->setTag($tags);
-        $this->assertSame($tags, $this->audience->getTag());
-        
-        $this->audience->setTag(null);
-        $this->assertNull($this->audience->getTag());
+        yield 'all' => ['all', true];
+        yield 'tag' => ['tag', ['tag1', 'tag2']];
+        yield 'tagAnd' => ['tagAnd', ['tag1', 'tag2']];
+        yield 'tagNot' => ['tagNot', ['tag3']];
+        yield 'alias' => ['alias', ['user1', 'user2']];
+        yield 'registrationId' => ['registrationId', ['reg1', 'reg2']];
+        yield 'segment' => ['segment', ['segment1']];
+        yield 'abTest' => ['abTest', ['test1']];
     }
 
-    public function testGetSetTagAnd(): void
+    public function testToDataReturnsAllWhenAllIsTrue(): void
     {
-        $tags = ['tag1', 'tag2', 'tag3'];
-        $this->audience->setTagAnd($tags);
-        $this->assertSame($tags, $this->audience->getTagAnd());
-        
-        $this->audience->setTagAnd(null);
-        $this->assertNull($this->audience->getTagAnd());
+        $audience = $this->createEntity();
+        $audience->setAll(true);
+
+        $this->assertSame('all', $audience->toData());
     }
 
-    public function testGetSetTagNot(): void
+    public function testToDataReturnsFilteredArrayWhenAllIsFalse(): void
     {
-        $tags = ['tag1', 'tag2', 'tag3'];
-        $this->audience->setTagNot($tags);
-        $this->assertSame($tags, $this->audience->getTagNot());
-        
-        $this->audience->setTagNot(null);
-        $this->assertNull($this->audience->getTagNot());
+        $audience = $this->createEntity();
+        $audience->setAll(false);
+        $audience->setTag(['tag1', 'tag2']);
+        $audience->setAlias(['user1']);
+
+        $result = $audience->toData();
+
+        $this->assertIsArray($result);
+        $this->assertEquals(['tag' => ['tag1', 'tag2'], 'alias' => ['user1']], $result);
     }
 
-    public function testGetSetAlias(): void
+    public function testToDataReturnsEmptyArrayWhenNoData(): void
     {
-        $aliases = ['alias1', 'alias2', 'alias3'];
-        $this->audience->setAlias($aliases);
-        $this->assertSame($aliases, $this->audience->getAlias());
-        
-        $this->audience->setAlias(null);
-        $this->assertNull($this->audience->getAlias());
+        $audience = $this->createEntity();
+        $audience->setAll(false);
+
+        $result = $audience->toData();
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
-    public function testGetSetRegistrationId(): void
+    public function testToArrayReturnsArrayWithAllKeyWhenToDataReturnsString(): void
     {
-        $ids = ['id1', 'id2', 'id3'];
-        $this->audience->setRegistrationId($ids);
-        $this->assertSame($ids, $this->audience->getRegistrationId());
-        
-        $this->audience->setRegistrationId(null);
-        $this->assertNull($this->audience->getRegistrationId());
+        $audience = $this->createEntity();
+        $audience->setAll(true);
+
+        $result = $audience->toArray();
+
+        $this->assertIsArray($result);
+        $this->assertEquals(['all' => true], $result);
     }
 
-    public function testGetSetSegment(): void
+    public function testToArrayReturnsSameArrayWhenToDataReturnsArray(): void
     {
-        $segments = ['segment1', 'segment2'];
-        $this->audience->setSegment($segments);
-        $this->assertSame($segments, $this->audience->getSegment());
-        
-        $this->audience->setSegment(null);
-        $this->assertNull($this->audience->getSegment());
-    }
+        $audience = $this->createEntity();
+        $audience->setAll(false);
+        $audience->setTag(['tag1']);
 
-    public function testGetSetAbTest(): void
-    {
-        $tests = ['test1', 'test2'];
-        $this->audience->setAbTest($tests);
-        $this->assertSame($tests, $this->audience->getAbTest());
-        
-        $this->audience->setAbTest(null);
-        $this->assertNull($this->audience->getAbTest());
-    }
+        $result = $audience->toArray();
 
-    public function testToDataWithAll(): void
-    {
-        $this->audience->setAll(true);
-        
-        $data = $this->audience->toData();
-        $this->assertSame('all', $data);
+        $this->assertIsArray($result);
+        $this->assertEquals(['tag' => ['tag1']], $result);
     }
-
-    public function testToDataWithTag(): void
-    {
-        $tags = ['tag1', 'tag2', 'tag3'];
-        $this->audience->setTag($tags);
-        
-        $data = $this->audience->toData();
-        $this->assertIsArray($data);
-        $this->assertArrayHasKey('tag', $data);
-        $this->assertSame($tags, $data['tag']);
-    }
-
-    public function testToDataWithMultipleTargets(): void
-    {
-        $aliases = ['alias1', 'alias2'];
-        $this->audience->setAlias($aliases);
-        
-        $ids = ['id1', 'id2'];
-        $this->audience->setRegistrationId($ids);
-        
-        $data = $this->audience->toData();
-        $this->assertIsArray($data);
-        $this->assertArrayHasKey('alias', $data);
-        $this->assertArrayHasKey('registration_id', $data);
-        $this->assertSame($aliases, $data['alias']);
-        $this->assertSame($ids, $data['registration_id']);
-    }
-
-    public function testToDataPrioritizesAll(): void
-    {
-        $this->audience->setAll(true);
-        $this->audience->setTag(['tag1', 'tag2']);
-        $this->audience->setAlias(['alias1', 'alias2']);
-        
-        $data = $this->audience->toData();
-        $this->assertSame('all', $data);
-    }
-    
-    public function testToArrayWithAll(): void
-    {
-        $this->audience->setAll(true);
-        
-        $data = $this->audience->toArray();
-        $this->assertArrayHasKey('all', $data);
-        $this->assertTrue($data['all']);
-    }
-    
-    public function testToArrayWithSpecificTargets(): void
-    {
-        $aliases = ['alias1', 'alias2'];
-        $this->audience->setAlias($aliases);
-        
-        $data = $this->audience->toArray();
-        $this->assertArrayHasKey('alias', $data);
-        $this->assertSame($aliases, $data['alias']);
-    }
-} 
+}

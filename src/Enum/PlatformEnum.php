@@ -2,13 +2,14 @@
 
 namespace JiguangPushBundle\Enum;
 
+use Tourze\EnumExtra\BadgeInterface;
 use Tourze\EnumExtra\Itemable;
 use Tourze\EnumExtra\ItemTrait;
 use Tourze\EnumExtra\Labelable;
 use Tourze\EnumExtra\Selectable;
 use Tourze\EnumExtra\SelectTrait;
 
-enum PlatformEnum: string implements Itemable, Labelable, Selectable
+enum PlatformEnum: string implements BadgeInterface, Itemable, Labelable, Selectable
 {
     use ItemTrait;
     use SelectTrait;
@@ -27,6 +28,17 @@ enum PlatformEnum: string implements Itemable, Labelable, Selectable
             self::IOS => 'iOS',
             self::QUICKAPP => '快应用',
             self::HMOS => '鸿蒙',
+        };
+    }
+
+    public function getBadge(): string
+    {
+        return match ($this) {
+            self::ALL => 'primary',
+            self::ANDROID => 'success',
+            self::IOS => 'info',
+            self::QUICKAPP => 'warning',
+            self::HMOS => 'secondary',
         };
     }
 }

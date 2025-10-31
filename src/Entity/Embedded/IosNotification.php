@@ -5,6 +5,9 @@ namespace JiguangPushBundle\Entity\Embedded;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\Arrayable\Arrayable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 #[ORM\Embeddable]
 class IosNotification implements Arrayable
 {
@@ -26,6 +29,9 @@ class IosNotification implements Arrayable
     #[ORM\Column(type: 'string', nullable: true, options: ['comment' => '通知类别'])]
     private ?string $category = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[ORM\Column(type: 'json', nullable: true, options: ['comment' => '扩展字段'])]
     private ?array $extras = null;
 
@@ -40,11 +46,9 @@ class IosNotification implements Arrayable
         return $this->alert;
     }
 
-    public function setAlert(?string $alert): static
+    public function setAlert(?string $alert): void
     {
         $this->alert = $alert;
-
-        return $this;
     }
 
     public function getSound(): ?string
@@ -52,11 +56,9 @@ class IosNotification implements Arrayable
         return $this->sound;
     }
 
-    public function setSound(?string $sound): static
+    public function setSound(?string $sound): void
     {
         $this->sound = $sound;
-
-        return $this;
     }
 
     public function getBadge(): ?int
@@ -64,11 +66,9 @@ class IosNotification implements Arrayable
         return $this->badge;
     }
 
-    public function setBadge(?int $badge): static
+    public function setBadge(?int $badge): void
     {
         $this->badge = $badge;
-
-        return $this;
     }
 
     public function isContentAvailable(): ?bool
@@ -76,11 +76,9 @@ class IosNotification implements Arrayable
         return $this->contentAvailable;
     }
 
-    public function setContentAvailable(?bool $contentAvailable): static
+    public function setContentAvailable(?bool $contentAvailable): void
     {
         $this->contentAvailable = $contentAvailable;
-
-        return $this;
     }
 
     public function isMutableContent(): ?bool
@@ -88,11 +86,9 @@ class IosNotification implements Arrayable
         return $this->mutableContent;
     }
 
-    public function setMutableContent(?bool $mutableContent): static
+    public function setMutableContent(?bool $mutableContent): void
     {
         $this->mutableContent = $mutableContent;
-
-        return $this;
     }
 
     public function getCategory(): ?string
@@ -100,23 +96,25 @@ class IosNotification implements Arrayable
         return $this->category;
     }
 
-    public function setCategory(?string $category): static
+    public function setCategory(?string $category): void
     {
         $this->category = $category;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getExtras(): ?array
     {
         return $this->extras;
     }
 
-    public function setExtras(?array $extras): static
+    /**
+     * @param array<string, mixed>|null $extras
+     */
+    public function setExtras(?array $extras): void
     {
         $this->extras = $extras;
-
-        return $this;
     }
 
     public function getThreadId(): ?string
@@ -124,11 +122,9 @@ class IosNotification implements Arrayable
         return $this->threadId;
     }
 
-    public function setThreadId(?string $threadId): static
+    public function setThreadId(?string $threadId): void
     {
         $this->threadId = $threadId;
-
-        return $this;
     }
 
     public function getInterruptionLevel(): ?string
@@ -136,13 +132,14 @@ class IosNotification implements Arrayable
         return $this->interruptionLevel;
     }
 
-    public function setInterruptionLevel(?string $interruptionLevel): static
+    public function setInterruptionLevel(?string $interruptionLevel): void
     {
         $this->interruptionLevel = $interruptionLevel;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -155,6 +152,6 @@ class IosNotification implements Arrayable
             'extras' => $this->getExtras(),
             'thread-id' => $this->getThreadId(),
             'interruption-level' => $this->getInterruptionLevel(),
-        ]);
+        ], fn ($value) => null !== $value);
     }
 }
