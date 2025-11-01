@@ -91,8 +91,7 @@ final class AccountCrudControllerTest extends AbstractEasyAdminControllerTestCas
 
     public function testIndexPage(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin');
         self::assertEquals(200, $client->getResponse()->getStatusCode());

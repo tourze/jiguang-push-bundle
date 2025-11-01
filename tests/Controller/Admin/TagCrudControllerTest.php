@@ -21,8 +21,7 @@ final class TagCrudControllerTest extends AbstractEasyAdminControllerTestCase
 {
     public function testValidationErrors(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         // Test creating Tag without required fields
         $crawler = $client->request('GET', '/admin/jiguang-push/tag/new');
@@ -93,8 +92,7 @@ final class TagCrudControllerTest extends AbstractEasyAdminControllerTestCase
 
     public function testIndexPage(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin');
         self::assertEquals(200, $client->getResponse()->getStatusCode());

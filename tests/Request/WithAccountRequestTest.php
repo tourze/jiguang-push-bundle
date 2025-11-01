@@ -2,11 +2,10 @@
 
 namespace JiguangPushBundle\Tests\Request;
 
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use JiguangPushBundle\Entity\Account;
 use JiguangPushBundle\Request\WithAccountRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * @internal

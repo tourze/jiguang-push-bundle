@@ -2,7 +2,7 @@
 
 namespace JiguangPushBundle\Tests\Request;
 
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use JiguangPushBundle\Entity\Account;
 use JiguangPushBundle\Entity\Embedded\Audience;
 use JiguangPushBundle\Entity\Embedded\Message;
