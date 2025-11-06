@@ -111,6 +111,7 @@ class JiguangService extends ApiClient
                 $result[$key] = $value;
             }
         }
+
         return $result;
     }
 }
