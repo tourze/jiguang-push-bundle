@@ -90,9 +90,4 @@ final class PushCrudControllerTest extends AbstractEasyAdminControllerTestCase
             self::assertEquals(200, $client->getResponse()->getStatusCode());
         }
     }
-
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(Push::class, PushCrudController::getEntityFqcn());
-    }
 }

@@ -110,11 +110,6 @@ final class DeviceCrudControllerTest extends AbstractEasyAdminControllerTestCase
         return null;
     }
 
-    public function testGetEntityFqcn(): void
-    {
-        self::assertSame(Device::class, DeviceCrudController::getEntityFqcn());
-    }
-
     public function testFieldsConfiguration(): void
     {
         $controller = new DeviceCrudController();

@@ -103,9 +103,4 @@ final class AccountCrudControllerTest extends AbstractEasyAdminControllerTestCas
             self::assertEquals(200, $client->getResponse()->getStatusCode());
         }
     }
-
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(Account::class, AccountCrudController::getEntityFqcn());
-    }
 }

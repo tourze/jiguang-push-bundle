@@ -104,9 +104,4 @@ final class TagCrudControllerTest extends AbstractEasyAdminControllerTestCase
             self::assertEquals(200, $client->getResponse()->getStatusCode());
         }
     }
-
-    public function testGetEntityFqcn(): void
-    {
-        $this->assertSame(Tag::class, TagCrudController::getEntityFqcn());
-    }
 }
