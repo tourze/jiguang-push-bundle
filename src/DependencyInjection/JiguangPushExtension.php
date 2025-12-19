@@ -4,7 +4,7 @@ namespace JiguangPushBundle\DependencyInjection;
 
 use Tourze\SymfonyDependencyServiceLoader\AutoExtension;
 
-class JiguangPushExtension extends AutoExtension
+final class JiguangPushExtension extends AutoExtension
 {
     protected function getConfigDir(): string
     {
